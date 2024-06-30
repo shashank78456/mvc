@@ -1,0 +1,58 @@
+#logout, #adreq{
+    color: var(--bs-info);
+}
+#logout:hover, #adreq:hover{
+    color: var(--bs-white);
+    background-color: var(--bs-primary)!important;
+}
+.nav-item:hover{
+    color: var(--bs-primary);
+}
+.card{
+    display: flex;
+    justify-content: space-between;
+    padding: 0.3rem;
+    background-color: var(--bs-light)
+}
+li{
+    padding: 0.3rem;
+}
+#filler{
+    height: 8rem;
+}
+.remove:hover{
+    background-color: rgb(255, 157, 0)!important;
+    color: white;
+}
+.deny:hover{
+    background-color: red !important;
+    color: white;
+}
+.return:hover{
+    background-color: red !important;
+    color: white;
+}
+.denyR:hover{
+    background-color: red !important;
+    color: white;
+}
+.accept:hover{
+    background-color: green!important;
+    color: white;
+}
+.add:hover{
+    background-color: green!important;
+    color: white;
+}
+.borrow:hover{
+    background-color: green!important;
+    color: white;
+}
+.acceptR:hover{
+    background-color: green!important;
+    color: white;
+}
+.delete:hover{
+    background-color: red !important;
+    color: white;
+}
