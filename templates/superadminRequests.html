@@ -15,40 +15,36 @@
             <span id="requests" class="nav-item px-3">User Requests</span>
         </span>
         <span class="container-fluid-end">
-            {{ if IsSuperAdmin.IsSuperAdmin }}
             <span class="col text-end p-2">
                 <button type="click" id="adreq" class="btn bg-white btn-block">Manage Admins</button>
             </span>
-            {{ end }}
             <span class="col text-end p-2">
                 <button type="click" class="btn bg-white btn-block" id="logout">Logout</button>
             </span>
     </nav>
     <div id="filler"></div>
-    <div id="manage-catalog">
+    <div id="user-requests">
         <div class="container py-5">
         <div class="row justify-content-center">
-            <h3 class="text-center">Requests for Admin Status</h3>
+            <h3 class="text-center">User Requests</h3>
                 <ol class="py-2">
-                    {{ range Users.Users }}
+                    {{ range .Requests }}
                     <li>
                         <div class="card">
-                            <div class="text-start px-2"> {{ .username }} </div>
+                            <div class="book col text-start px-2">{{ .Bookname }}</div>
+                            <div class="user col text-end px-2">by {{ .Username }}</div>
                             <div class="col text-end py-2">
-                                <span class="col text-end p-2">
-                                    <button type="click" class="acceptR btn bg-white btn-block" value="{{ .userID }}">Accept</button>
-                                </span>
-                                <span class="col text-end p-2">
-                                    <button type="click" class="denyR btn bg-white btn-block" value="{{ .userID}}">Deny</button>
+                                <span class="col text-start p-2">
+                                    <button type="click" class="btn accept bg-white btn-block" value="{{ .RequestID }}">Accept</button>
                                 </span>
                             </div>
                         </div>
                     </li>
                     {{ end }}
                 </ol>
-        </div>
+            </div>
         </div>
     </div>
 </body>
-<script src="../public/admin.js"></script>
+<script src="../public/superadmin.js"></script>
 </html>

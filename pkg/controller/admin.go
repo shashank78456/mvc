@@ -3,34 +3,19 @@ package controller
 import (
 	"encoding/json"
 	"net/http"
+
 	"github.com/gorilla/mux"
 	"github.com/shashank78456/mvc/pkg/models"
-	"github.com/shashank78456/mvc/pkg/views"
 	"github.com/shashank78456/mvc/pkg/types"
+	"github.com/shashank78456/mvc/pkg/views"
 )
 
 func RenderAdmin(writer http.ResponseWriter, request *http.Request) {
 	page := mux.Vars(request)["page"]
-	username := request.Context().Value("username").(string)
-	userID, err := models.GetUserID(username)
-
-	if(err!=nil) {
-		writer.WriteHeader(http.StatusInternalServerError)
-		writer.Write([]byte("Could not get UserID"))
-		return
-	}
-	
-	IsSuperAdmin, err := models.IsSuperAdmin(userID)
-
-	if(err!=nil) {
-		writer.WriteHeader(http.StatusInternalServerError)
-		writer.Write([]byte("Could not get Admin Level"))
-		return
-	}
 	
 	if(page=="home") {
 		t := views.AdminHomePage()
-		Books, err := models.FetchBooks(0)
+		books, err := models.FetchBooks(0)
 
 		if(err!=nil) {
 			writer.WriteHeader(http.StatusInternalServerError)
@@ -38,15 +23,15 @@ func RenderAdmin(writer http.ResponseWriter, request *http.Request) {
 			return
 		}
 
-		BookData := types.BookData{
-			Books: Books,
-			IsSuperAdmin: IsSuperAdmin,
+		Books := types.BookList{
+			Books: books,
 		}
-		t.Execute(writer, BookData)
+
+		t.Execute(writer, Books)
 
 	} else if(page=="add") {
 		t := views.AdminPromptPage()
-		Books, err := models.FetchBooks(0)
+		books, err := models.FetchBooks(0)
 
 		if(err!=nil) {
 			writer.WriteHeader(http.StatusInternalServerError)
@@ -54,15 +39,15 @@ func RenderAdmin(writer http.ResponseWriter, request *http.Request) {
 			return
 		}
 
-		BookData := types.BookData{
-			Books: Books,
-			IsSuperAdmin: IsSuperAdmin,
+		Books := types.BookList{
+			Books: books,
 		}
-		t.Execute(writer, BookData)
+
+		t.Execute(writer, Books)
 
 	} else if(page=="requests") {
 		t := views.AdminRequestsPage()
-		Requests, err := models.FetchRequests()
+		requests, err := models.FetchRequests()
 
 		if(err!=nil) {
 			writer.WriteHeader(http.StatusInternalServerError)
@@ -70,15 +55,71 @@ func RenderAdmin(writer http.ResponseWriter, request *http.Request) {
 			return
 		}
 
-		RequestData := types.RequestData{
-			Requests: Requests,
-			IsSuperAdmin: IsSuperAdmin,
+		Requests := types.RequestList{
+			Requests: requests,
 		}
-		t.Execute(writer, RequestData)
+
+		t.Execute(writer, Requests)
+
+	} else {
+		writer.WriteHeader(http.StatusNotFound)
+	}
+}
+
+func RenderSuperAdmin(writer http.ResponseWriter, request *http.Request) {
+	page := mux.Vars(request)["page"]
+	
+	if(page=="home") {
+		t := views.SuperAdminHomePage()
+		books, err := models.FetchBooks(0)
+
+		if(err!=nil) {
+			writer.WriteHeader(http.StatusInternalServerError)
+			writer.Write([]byte("Could not fetch books"))
+			return
+		}
+
+		Books := types.BookList{
+			Books: books,
+		}
+
+		t.Execute(writer, Books)
+
+	} else if(page=="add") {
+		t := views.SuperAdminPromptPage()
+		books, err := models.FetchBooks(0)
+
+		if(err!=nil) {
+			writer.WriteHeader(http.StatusInternalServerError)
+			writer.Write([]byte("Could not fetch books"))
+			return
+		}
+
+		Books := types.BookList{
+			Books: books,
+		}
+
+		t.Execute(writer, Books)
+
+	} else if(page=="requests") {
+		t := views.SuperAdminRequestsPage()
+		requests, err := models.FetchRequests()
+
+		if(err!=nil) {
+			writer.WriteHeader(http.StatusInternalServerError)
+			writer.Write([]byte("Could not fetch requests"))
+			return
+		}
+
+		Requests := types.RequestList{
+			Requests: requests,
+		}
+
+		t.Execute(writer, Requests)
 
 	} else if(page=="adreq") {
-		t := views.AdminSuperPage()
-		Users, err := models.FetchUsersWithAdminRequest()
+		t := views.SuperAdminSuperPage()
+		users, err := models.FetchUsersWithAdminRequest()
 
 		if(err!=nil) {
 			writer.WriteHeader(http.StatusInternalServerError)
@@ -86,11 +127,11 @@ func RenderAdmin(writer http.ResponseWriter, request *http.Request) {
 			return
 		}
 
-		UserData := types.UserData{
-			Users: Users,
-			IsSuperAdmin: IsSuperAdmin,
+		Users := types.UserList{
+			Users: users,
 		}
-		t.Execute(writer, UserData)
+
+		t.Execute(writer, Users)
 	} else {
 		writer.WriteHeader(http.StatusNotFound)
 	}

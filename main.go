@@ -1,6 +1,6 @@
-package cmd
+package main
 
-import(
+import (
 	"fmt"
 	"github.com/shashank78456/mvc/pkg/api"
 )

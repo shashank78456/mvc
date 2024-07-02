@@ -13,12 +13,16 @@ func RenderClient(writer http.ResponseWriter, request *http.Request) {
 	page := mux.Vars(request)["page"]
 	if(page=="home") {
 		t := views.ClientHomePage()
-		Books, err := models.FetchBooks(1)
+		books, err := models.FetchBooks(1)
 
 		if(err!=nil) {
 			writer.WriteHeader(http.StatusInternalServerError)
 			writer.Write([]byte("Could not fetch books"))
 			return
+		}
+
+		Books := types.BookList{
+			Books: books,
 		}
 
 		t.Execute(writer, Books)
@@ -34,12 +38,16 @@ func RenderClient(writer http.ResponseWriter, request *http.Request) {
 		}
 
 		t := views.ClientHistoryPage()
-		Books, err := models.FetchHistory(userID)
+		books, err := models.FetchHistory(userID)
 
 		if(err!=nil) {
 			writer.WriteHeader(http.StatusInternalServerError)
 			writer.Write([]byte("Could not fetch history"))
 			return
+		}
+
+		Books := types.BookList{
+			Books: books,
 		}
 
 		t.Execute(writer, Books)
@@ -55,12 +63,16 @@ func RenderClient(writer http.ResponseWriter, request *http.Request) {
 		}
 
 		t := views.ClientReturnPage()
-		Books, err := models.FetchBorrowedBooks(userID)
+		books, err := models.FetchBorrowedBooks(userID)
 
 		if(err!=nil) {
 			writer.WriteHeader(http.StatusInternalServerError)
 			writer.Write([]byte("Could not fetch borrowed books"))
 			return
+		}
+
+		Books := types.BookList{
+			Books: books,
 		}
 
 		t.Execute(writer, Books)
@@ -149,12 +161,22 @@ func AdminRequest(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	hasAlreadyRequested, err := models.RequestForAdmin(userID)
+	hasAlreadyRequested, err := models.HasAlreadyRequested(userID)
 
 	if(err!=nil) {
 		writer.WriteHeader(http.StatusInternalServerError)
-		writer.Write([]byte("Could not request for admin"))
+		writer.Write([]byte("Could not check if already requested"))
 		return
+	}
+
+	if(!hasAlreadyRequested) {
+		err := models.RequestForAdmin(userID)
+		if(err!=nil) {
+			writer.WriteHeader(http.StatusInternalServerError)
+			writer.Write([]byte("Could not request for admin"))
+			return
+		}
+		
 	}
 
 	status := make(map[string]bool)

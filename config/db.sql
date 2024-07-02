@@ -4,10 +4,9 @@ USE Library;
 CREATE TABLE Users (
     userID INT AUTO_INCREMENT NOT NULL,
     username varchar(255) DEFAULT NULL,
-    userType enum('client','admin') DEFAULT 'client',
+    userType enum('client','admin','superadmin') DEFAULT 'client',
     name varchar(255) DEFAULT NULL,
     password varchar(1024) DEFAULT NULL,
-    isSuperAdmin TINYINT(1) DEFAULT 0,
     hasAdminRequest TINYINT(1) DEFAULT 0,
     PRIMARY KEY (userID)
 );

@@ -45,7 +45,7 @@ func HandleSignup(writer http.ResponseWriter, request *http.Request) {
 			return
 		}
 
-		cookie := SendToken(writer, request, User.Username)
+		cookie := SendToken(writer, request, User.Username, "client")
 		http.SetCookie(writer, &cookie)
 		writer.Header().Set("Content-Type", "application/json")
 

@@ -1,11 +1,11 @@
-function adminHandler(){
+function superadminHandler(){
 
     document.getElementById("catalog").addEventListener("click", async ()=> {
-        window.location.href = `http://localhost:3000/admin/home`;
+        window.location.href = `http://localhost:3000/superadmin/home`;
     })
 
     document.getElementById("requests").addEventListener("click", async ()=> {
-        window.location.href = `http://localhost:3000/admin/requests`;
+        window.location.href = `http://localhost:3000/superadmin/requests`;
     })
 
     document.getElementById("logout").addEventListener("click", async ()=> {
@@ -15,14 +15,14 @@ function adminHandler(){
 
     try {
         document.getElementById("prompt-open").addEventListener("click", async ()=> {
-            window.location.href = `http://localhost:3000/admin/add`;
+            window.location.href = `http://localhost:3000/superadmin/add`;
         })
     }
     catch{};
 
     try {
     document.getElementById("adreq").addEventListener("click", async ()=> {
-        window.location.href = `http://localhost:3000/admin/adreq`;
+        window.location.href = `http://localhost:3000/superadmin/adreq`;
     })
     }
     catch{};
@@ -33,11 +33,11 @@ function adminHandler(){
         const bookname = document.getElementById("new-book").value.trim();
         const author = document.getElementById("new-author").value.trim();
         if(bookname.length!=0) {
-            const response  = await post({bookname: bookname, author: author}, `http://localhost:3000/admin/add_new_book`);
+            const response  = await post({bookname: bookname, author: author}, `http://localhost:3000/superadmin/add_new_book`);
             const res = await response.json();
             if(res.isAdded) {
                 window.alert("Added Succesfully");
-                window.location.href = `http://localhost:3000/admin/home`;
+                window.location.href = `http://localhost:3000/superadmin/home`;
             }
             else {
                 window.alert("Book already exists");
@@ -55,9 +55,9 @@ function adminHandler(){
     for(let i=0; i<addButton.length; i++) {
         addButton[i].addEventListener("click", async (e)=> {
             e.preventDefault();
-            await post({bookid: addButton[i].value, toDo: "add"}, `http://localhost:3000/admin/add_book`);
+            await post({bookid: addButton[i].value, toDo: "add"}, `http://localhost:3000/superadmin/add_book`);
             window.alert("Added Successfully");
-            window.location.href = `http://localhost:3000/admin/home`;
+            window.location.href = `http://localhost:3000/superadmin/home`;
         })
     }
     
@@ -65,9 +65,9 @@ function adminHandler(){
     for(let i=0; i<removeButton.length; i++) {
         removeButton[i].addEventListener("click", async (e)=> {
             e.preventDefault();
-            await post({bookid: removeButton[i].value, toDo: "remove"}, `http://localhost:3000/admin/remove_book`);
+            await post({bookid: removeButton[i].value, toDo: "remove"}, `http://localhost:3000/superadmin/remove_book`);
             window.alert("Removed Successfully");
-            window.location.href = `http://localhost:3000/admin/home`;
+            window.location.href = `http://localhost:3000/superadmin/home`;
         })
     }
 
@@ -75,11 +75,11 @@ function adminHandler(){
     for(let i=0; i<deleteButton.length; i++) {
         deleteButton[i].addEventListener("click", async (e)=> {
             e.preventDefault();
-            const response = await post({bookid: deleteButton[i].value, toDo: "delete"}, `http://localhost:3000/admin/delete_book`);
+            const response = await post({bookid: deleteButton[i].value, toDo: "delete"}, `http://localhost:3000/superadmin/delete_book`);
             const res = await response.json();
             if(res.isDeleted) {
                 window.alert("Deleted Successfully");
-                window.location.href = `http://localhost:3000/admin/home`;
+                window.location.href = `http://localhost:3000/superadmin/home`;
             }
             else{
                 window.alert("Cannot delete this book as it is already borrowed");
@@ -95,9 +95,9 @@ function adminHandler(){
     for(let i=0; i<acceptButton.length; i++) {
         let requestid = acceptButton[i].value;
         acceptButton[i].addEventListener("click", async ()=> {
-            await post({requestid: requestid}, `http://localhost:3000/admin/accept_request`);
+            await post({requestid: requestid}, `http://localhost:3000/superadmin/accept_request`);
             window.alert("Accepted Successfully");
-            window.location.href = `http://localhost:3000/admin/requests`;
+            window.location.href = `http://localhost:3000/superadmin/requests`;
         })
     }
     }
@@ -108,17 +108,17 @@ function adminHandler(){
     const denyButtonR = document.getElementsByClassName("denyR");
     for(let i=0; i<acceptButtonR.length; i++) {
         acceptButtonR[i].addEventListener("click", async ()=> {
-            await post({userid: acceptButtonR[i].value}, `http://localhost:3000/admin/accept_admin`);
+            await post({userid: acceptButtonR[i].value}, `http://localhost:3000/superadmin/accept_admin`);
             window.alert("Accepted Successfully");
-            window.location.href = `http://localhost:3000/admin/adreq`;
+            window.location.href = `http://localhost:3000/superadmin/adreq`;
         })
     }
     
     for(let i=0; i<denyButtonR.length; i++) {
         denyButtonR[i].addEventListener("click", async ()=> {
-            await post({userid: denyButtonR[i].value}, `http://localhost:3000/admin/deny_admin`);
+            await post({userid: denyButtonR[i].value}, `http://localhost:3000/superadmin/deny_admin`);
             window.alert("Denied Successfully");
-            window.location.href = `http://localhost:3000/admin/adreq`;
+            window.location.href = `http://localhost:3000/superadmin/adreq`;
         })
     }
     }
@@ -153,4 +153,4 @@ async function get(url) {
     });
 }
 
-adminHandler();
+superadminHandler();

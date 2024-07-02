@@ -17,8 +17,7 @@ go mod tidy
 
 - Running Server
 
-1. Execute `go build -o main ./cmd/main.go`.
-2. Run `./main`
+1. Execute `go run main.go`.
 
 - Project Specs
 

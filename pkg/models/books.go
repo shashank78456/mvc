@@ -8,14 +8,14 @@ import (
 func AddNewBook(bookname string, author string) (bool, error) {
 	db, err := Connection()
 	if(err!=nil) {
-		fmt.Println("Error in connecting to DB")
+		fmt.Println("Error in connecting to DB", err)
 		return false, err
 	}
 	
 	checksql := "SELECT * FROM Books WHERE bookname = ? AND author = ?"
 	rows, err := db.Query(checksql, bookname, author)
 	if(err!=nil) {
-		fmt.Println("Failed to fetch existing books")
+		fmt.Println("Failed to fetch existing books", err)
 		return false, err
 	}
 
@@ -24,7 +24,7 @@ func AddNewBook(bookname string, author string) (bool, error) {
 		_, err = db.Exec(sql, bookname, author)
 
 		if(err!=nil) {
-			fmt.Println("Inserting New Book Failed")
+			fmt.Println("Inserting New Book Failed", err)
 			return false, err
 		}
 		return true, nil
@@ -37,7 +37,7 @@ func AddNewBook(bookname string, author string) (bool, error) {
 func AddBook(bookID int) error {
 	db, err := Connection()
 	if(err!=nil) {
-		fmt.Println("Error in connecting to DB")
+		fmt.Println("Error in connecting to DB", err)
 		return err
 	}
 
@@ -45,7 +45,7 @@ func AddBook(bookID int) error {
 	_, err = db.Exec(sql, bookID)
 
 	if(err!=nil) {
-		fmt.Println("Adding Book Failed")
+		fmt.Println("Adding Book Failed", err)
 		return err
 	}
 	return nil
@@ -62,7 +62,7 @@ func RemoveBook(bookID int) error {
 	_, err = db.Exec(sql, bookID)
 
 	if(err!=nil) {
-		fmt.Println("Removing Book Failed")
+		fmt.Println("Removing Book Failed", err)
 		return err
 	}
 	return nil
@@ -71,7 +71,7 @@ func RemoveBook(bookID int) error {
 func DeleteBook(bookID int) (error) {
 	db, err := Connection()
 	if(err!=nil) {
-		fmt.Println("Error in connecting to DB")
+		fmt.Println("Error in connecting to DB", err)
 		return err
 	}
 	
@@ -79,62 +79,59 @@ func DeleteBook(bookID int) (error) {
 	_, err = db.Exec(sql, bookID)
 
 	if(err!=nil) {
-		fmt.Println("Deleting Book Failed")
+		fmt.Println("Deleting Book Failed", err)
 		return err
 	}
 	return nil
 }
 
-func FetchBooks(minQuantity int) (types.BookList, error) {
+func FetchBooks(minQuantity int) ([]types.Book, error) {
 	db, err := Connection()
 	if(err!=nil) {
-		fmt.Println("Error in connecting to DB")
-		return types.BookList{}, err
+		fmt.Println("Error in connecting to DB", err)
+		return []types.Book{}, err
 	}
 
 	sql := "SELECT * FROM Books WHERE quantity >= ?"
 	rows, err := db.Query(sql, minQuantity)
 
 	if(err!=nil) {
-		fmt.Println("Fetching Books Failed")
-		return types.BookList{}, err
+		fmt.Println("Fetching Books Failed", err)
+		return []types.Book{}, err
 	}
 
 	var fetchBooks []types.Book
 	for rows.Next() {
 		var book types.Book
-		err := rows.Scan(&book.Bookname)
+		err := rows.Scan(&book.BookID, &book.Bookname, &book.Author, &book.Quantity)
 		if(err!=nil) {
-			fmt.Println("Error in scanning rows")
-			return types.BookList{}, err
+			fmt.Println("Error in scanning rows", err)
+			return []types.Book{}, err
 		}
 		fetchBooks = append(fetchBooks, book)
 	}
-
-	var Books types.BookList
-	Books.Books = fetchBooks
- 	return Books, nil
+ 	return fetchBooks, nil
 }
 
 func fetchBook(bookid int) (types.Book, error){
 	db, err := Connection()
 	if(err!=nil) {
-		fmt.Println("Error in connecting to DB")
+		fmt.Println("Error in connecting to DB", err)
 		return types.Book{}, err
 	}
 
 	sql := "SELECT * FROM Books WHERE bookid = ?"
 	rows, err := db.Query(sql, bookid)
 	if(err!=nil) {
-		fmt.Println("Fetching Book Failed")
+		fmt.Println("Fetching Book Failed", err)
 		return types.Book{}, err
 	}
 
 	var Book types.Book
 	for rows.Next() {
-		err := rows.Scan(&Book)
+		err := rows.Scan(&Book.BookID, &Book.Bookname, &Book.Author, &Book.Quantity)
 		if(err!=nil) {
-			fmt.Println("Error in scanning rows")
+			fmt.Println("Error in scanning rows", err)
 			return types.Book{}, err
 		}
 	}

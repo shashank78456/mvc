@@ -9,11 +9,16 @@ function loginHandler(){
         if(username.length!=0 && password.length!=0) {
             const response = await post({username: username, password: password},`http://localhost:3000`);
             const res = await response.json();
-            if(res.isValid)
+            if(res.isValid && res.isExist) {
                 window.location.href = `http://localhost:3000/${res.userType}/home`;
-            else
+            }
+            else if(!res.isExist) {
+                window.alert("User Does Not Exist");
+            }
+            else {
                 window.alert("Wrong credentials");
             }
+        }
         else {
             window.alert("Please Enter Valid Information");
         }

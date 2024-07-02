@@ -1,53 +1,38 @@
 package types
 
-//make chnages in type according to the json data
 type User struct {
-	UserID int
-	Username string
-	UserType string
-	Name string
-	Password string
+	UserID int `json:"userid"`
+	Username string `json:"username"`
+	UserType string	`json:"userType"`
+	Name string	`json:"name"`
+	Password string	`json:"password"`
 }
 
 type Book struct {
-	BookID int
-	Bookname string
-	Author string
-	Quantity int
+	BookID int `json:"bookid"`
+	Bookname string `json:"bookname"`
+	Author string `json:"author"`
+	Quantity int `json:"quantity"`
 }
 
 type Request struct {
-	RequestID int
-	UserID int
-	BookID int
-	Username string
-	Bookname string
-	Author string
+	RequestID int `json:"requestID"`
+	UserID int `json:"userid"`
+	BookID int `json:"bookid"`
+	Username string `json:"username"`
+	Bookname string	`json:"bookname"`
+	Author string `json:"author"`
 }
 
 type BookList struct {
-	Books []Book
+	Books []Book `json:"books"`
 }
 
 type UserList struct {
-	Users []User
+	Users []User `json:"users"`
 }
 
 type RequestList struct {
-	Requests []Request
+	Requests []Request `json:"requests"`
 }
 
-type BookData struct {
-	IsSuperAdmin bool
-	Books BookList
-}
-
-type UserData struct {
-	IsSuperAdmin bool
-	Users UserList
-}
-
-type RequestData struct {
-	IsSuperAdmin bool
-	Requests RequestList
-}
