@@ -31,9 +31,9 @@ function clientHandler(){
     const borrowBooks = document.getElementsByClassName("borrow");
     for(let i=0; i<borrowBooks.length; i++) {
         borrowBooks[i].addEventListener("click", async () => {
-            const response = await post({bookid: borrowBooks[i].value}, `http://localhost:3000/client/request_book`);
+            const response = await post({bookid: parseInt(borrowBooks[i].value)}, `http://localhost:3000/client/request_book`);
             const res = await response.json();
-            if(!res.hasAlreadyRequested) {
+            if(res.hasAlreadyRequested) {
                 window.alert("Requested Successfully");
                 window.location.href = `http://localhost:3000/client/home`;
             }
@@ -49,7 +49,7 @@ function clientHandler(){
         const returnBooks = document.getElementsByClassName("return");
         for(let i=0; i<returnBooks.length; i++) {
             returnBooks[i].addEventListener("click", async () => {
-                await post({bookid: returnBooks[i].value}, `http://localhost:3000/client/return_book`);
+                await post({bookid: parseInt(returnBooks[i].value)}, `http://localhost:3000/client/return_book`);
                 window.alert("Returned Successfully");
                 window.location.href = `http://localhost:3000/client/return`;
             })

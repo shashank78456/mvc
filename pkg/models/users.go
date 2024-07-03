@@ -59,16 +59,22 @@ func HandleAdminRequest(userID int, isAccepted bool) error {
 		return err
 	}
 
-	status := 0
 	if(isAccepted) {
-		status = 1
+		sql := "UPDATE Users SET hasAdminRequest = 0, userType = 'admin' WHERE userID = ?"
+		_, err = db.Exec(sql, userID)
+		if(err!=nil) {
+			fmt.Println("Failed to update status", err)
+			return err
+		}
+	} else {
+		sql := "UPDATE Users SET hasAdminRequest = 0 WHERE userID = ?"
+		_, err = db.Exec(sql, userID)
+		if(err!=nil) {
+			fmt.Println("Failed to update status", err)
+			return err
+		}
 	}
-	sql := "UPDATE Users SET isAccepted = ? WHERE userID = ?"
-	_, err = db.Exec(sql, status, userID)
-	if(err!=nil) {
-		fmt.Println("Failed to update status", err)
-		return err
-	}
+
 	return nil
 }
 
@@ -94,6 +100,7 @@ func FetchUsersWithAdminRequest() ([]types.User, error) {
 			fmt.Println("Error scanning rows", err)
 			return []types.User{}, err
 		}
+		fetchUsers = append(fetchUsers, user)
 	}
 
 	return fetchUsers, nil

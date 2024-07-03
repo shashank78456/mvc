@@ -12,7 +12,7 @@ func CreateRequest(userID int, bookID int) (bool, error) {
 		return false, err
 	}
 	
-	checksql := "SELECT * FROM Requests WHERE userID = ? AND bookID = ?"
+	checksql := "SELECT * FROM Requests WHERE userID = ? AND bookID = ? AND ((isBorrowed = 0 AND isAccepted = 0) OR (isBorrowed = 1 AND isAccepted = 1))"
 	rows, err := db.Query(checksql, userID, bookID)
 	if(err!=nil) {
 		fmt.Println("Failed to fetch existing Requests", err)
@@ -41,7 +41,7 @@ func AcceptRequest(requestID int) error {
 		return err
 	}
 
-	sql := "UPDATE Requests SET isBorrowed = 1 AND isAccepted = 1 WHERE requestID = ?"
+	sql := "UPDATE Requests SET isBorrowed = 1, isAccepted = 1 WHERE requestID = ?"
 	_, err = db.Exec(sql, requestID)
 	if(err!=nil) {
 		fmt.Println("Updating Request Failed", err)
@@ -134,8 +134,8 @@ func FetchRequests() ([]types.Request, error) {
 	for rows.Next() {
 		var request types.Request
 		err := rows.Scan(&request.RequestID, &request.UserID, &request.BookID)
-		if(err==nil) {
-			fmt.Println("Error in scanning rows", err)
+		if(err!=nil) {
+			fmt.Println("Error in scanning request rows", err)
 			return []types.Request{}, err
 		}
 
@@ -145,10 +145,10 @@ func FetchRequests() ([]types.Request, error) {
 			fmt.Println("Failed to Fetch Books", err)
 			return []types.Request{}, err
 		}
-		for rows.Next() {
+		for bookrows.Next() {
 			err := bookrows.Scan(&request.Bookname, &request.Author)
-			if(err==nil) {
-				fmt.Println("Error in scanning rows", err)
+			if(err!=nil) {
+				fmt.Println("Error in scanning book rows", err)
 				return []types.Request{}, err
 			}
 		}
@@ -161,8 +161,8 @@ func FetchRequests() ([]types.Request, error) {
 		}
 		for userrows.Next() {
 			err := userrows.Scan(&request.Username)
-			if(err==nil) {
-				fmt.Println("Error in scanning rows", err)
+			if(err!=nil) {
+				fmt.Println("Error in scanning user rows", err)
 				return []types.Request{}, err
 			}
 		}
@@ -191,7 +191,7 @@ func FetchBorrowedBooks(userID int) ([]types.Book, error) {
 	for rows.Next() {
 		var bookid int
 		err := rows.Scan(&bookid)
-		if(err==nil) {
+		if(err!=nil) {
 			fmt.Println("Error in scanning rows", err)
 			return []types.Book{}, err
 		}
@@ -224,7 +224,7 @@ func FetchHistory(userID int) ([]types.Book, error) {
 	for rows.Next() {
 		var bookid int
 		err := rows.Scan(&bookid)
-		if(err==nil) {
+		if(err!=nil) {
 			fmt.Println("Error in scanning rows", err)
 			return []types.Book{}, err
 		}

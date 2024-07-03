@@ -55,7 +55,7 @@ function adminHandler(){
     for(let i=0; i<addButton.length; i++) {
         addButton[i].addEventListener("click", async (e)=> {
             e.preventDefault();
-            await post({bookid: addButton[i].value, toDo: "add"}, `http://localhost:3000/admin/add_book`);
+            await post({bookid: parseInt(addButton[i].value), toDo: "add"}, `http://localhost:3000/admin/add_book`);
             window.alert("Added Successfully");
             window.location.href = `http://localhost:3000/admin/home`;
         })
@@ -65,7 +65,7 @@ function adminHandler(){
     for(let i=0; i<removeButton.length; i++) {
         removeButton[i].addEventListener("click", async (e)=> {
             e.preventDefault();
-            await post({bookid: removeButton[i].value, toDo: "remove"}, `http://localhost:3000/admin/remove_book`);
+            await post({bookid: parseInt(removeButton[i].value), toDo: "remove"}, `http://localhost:3000/admin/remove_book`);
             window.alert("Removed Successfully");
             window.location.href = `http://localhost:3000/admin/home`;
         })
@@ -75,7 +75,7 @@ function adminHandler(){
     for(let i=0; i<deleteButton.length; i++) {
         deleteButton[i].addEventListener("click", async (e)=> {
             e.preventDefault();
-            const response = await post({bookid: deleteButton[i].value, toDo: "delete"}, `http://localhost:3000/admin/delete_book`);
+            const response = await del({bookid: parseInt(deleteButton[i].value), toDo: "delete"}, `http://localhost:3000/admin/delete_book`);
             const res = await response.json();
             if(res.isDeleted) {
                 window.alert("Deleted Successfully");
@@ -93,7 +93,7 @@ function adminHandler(){
     try {
     const acceptButton = document.getElementsByClassName("accept");
     for(let i=0; i<acceptButton.length; i++) {
-        let requestid = acceptButton[i].value;
+        let requestid = parseInt(acceptButton[i].value);
         acceptButton[i].addEventListener("click", async ()=> {
             await post({requestid: requestid}, `http://localhost:3000/admin/accept_request`);
             window.alert("Accepted Successfully");
@@ -102,27 +102,7 @@ function adminHandler(){
     }
     }
     catch{};
-
-    try {
-    const acceptButtonR = document.getElementsByClassName("acceptR");
-    const denyButtonR = document.getElementsByClassName("denyR");
-    for(let i=0; i<acceptButtonR.length; i++) {
-        acceptButtonR[i].addEventListener("click", async ()=> {
-            await post({userid: acceptButtonR[i].value}, `http://localhost:3000/admin/accept_admin`);
-            window.alert("Accepted Successfully");
-            window.location.href = `http://localhost:3000/admin/adreq`;
-        })
-    }
     
-    for(let i=0; i<denyButtonR.length; i++) {
-        denyButtonR[i].addEventListener("click", async ()=> {
-            await post({userid: denyButtonR[i].value}, `http://localhost:3000/admin/deny_admin`);
-            window.alert("Denied Successfully");
-            window.location.href = `http://localhost:3000/admin/adreq`;
-        })
-    }
-    }
-    catch{};
 }
 
 async function post(data, url) {
@@ -150,6 +130,24 @@ async function get(url) {
             resolve(response);
         })
         .catch(error => console.error(error));
+    });
+}
+
+async function del(data, url) {
+    return new Promise((resolve) => {
+        fetch(url, {
+            method: "DELETE",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => {
+            resolve(response);
+        })
+        .catch(error => {
+            console.error(error);
+        });
     });
 }
 
