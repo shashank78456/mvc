@@ -17,7 +17,7 @@ go mod tidy
 
 2. From project root directory execute `migrate -path ./database/migrations -database "mysql://username:password@(127.0.0.1:3306)/Library" up`
 
-Replace username and password with your own
+Replace username and password with your own.
 
 - Running Server
 

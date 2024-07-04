@@ -13,15 +13,13 @@ func CreateUser(username string, password string, name string) error {
 	}
 	userType := "client"
 
-	checksql := "SELECT * FROM USERS"
-	rows, err := db.Query(checksql)
-
+	isUserTableNotEmpty, err := IsUserTableNotEmpty()
 	if(err!=nil) {
-		fmt.Println("Fetching Users Failed", err)
+		fmt.Println("Failed to check existing users", err)
 		return err
 	}
 
-	if(!rows.Next()) {
+	if(!isUserTableNotEmpty) {
 		userType = "superadmin"
 	}
 
@@ -250,4 +248,25 @@ func GetName(username string) (string, error) {
 	}
 
 	return name, nil
+}
+
+func IsUserTableNotEmpty() (bool, error) {
+	db, err := Connection()
+	if(err!=nil) {
+		fmt.Println("Error in connecting to DB", err)
+		return false, err
+	}
+
+	checksql := "SELECT * FROM USERS"
+	rows, err := db.Query(checksql)
+
+	if(err!=nil) {
+		fmt.Println("Fetching Users Failed", err)
+		return false, err
+	}
+
+	if(!rows.Next()) {
+		return false, err
+	}
+	return true, err
 }
