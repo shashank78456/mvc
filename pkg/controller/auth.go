@@ -123,7 +123,7 @@ func SendToken(writer http.ResponseWriter, request *http.Request, username strin
 }
 
 func HashPassword(password string) (string, error) {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 20)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	if (err!=nil) {
 		return "",err
 	}

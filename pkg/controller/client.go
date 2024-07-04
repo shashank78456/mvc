@@ -11,6 +11,14 @@ import (
 
 func RenderClient(writer http.ResponseWriter, request *http.Request) {
 	page := mux.Vars(request)["page"]
+	name, err := models.GetName(request.Context().Value("username").(string))
+
+	if(err!=nil) {
+		writer.WriteHeader(http.StatusInternalServerError)
+		writer.Write([]byte("Could not fetch name"))
+		return
+	}
+	
 	if(page=="home") {
 		t := views.ClientHomePage()
 		books, err := models.FetchBooks(1)
@@ -23,6 +31,7 @@ func RenderClient(writer http.ResponseWriter, request *http.Request) {
 
 		Books := types.BookList{
 			Books: books,
+			Name: name,
 		}
 
 		t.Execute(writer, Books)
@@ -48,6 +57,7 @@ func RenderClient(writer http.ResponseWriter, request *http.Request) {
 
 		Books := types.BookList{
 			Books: books,
+			Name: name,
 		}
 
 		t.Execute(writer, Books)
@@ -73,6 +83,7 @@ func RenderClient(writer http.ResponseWriter, request *http.Request) {
 
 		Books := types.BookList{
 			Books: books,
+			Name: name,
 		}
 
 		t.Execute(writer, Books)

@@ -12,7 +12,14 @@ import (
 
 func RenderAdmin(writer http.ResponseWriter, request *http.Request) {
 	page := mux.Vars(request)["page"]
-	
+	name, err := models.GetName(request.Context().Value("username").(string))
+
+	if(err!=nil) {
+		writer.WriteHeader(http.StatusInternalServerError)
+		writer.Write([]byte("Could not fetch name"))
+		return
+	}
+
 	if(page=="home") {
 		t := views.AdminHomePage()
 		books, err := models.FetchBooks(0)
@@ -25,6 +32,7 @@ func RenderAdmin(writer http.ResponseWriter, request *http.Request) {
 
 		Books := types.BookList{
 			Books: books,
+			Name: name,
 		}
 
 		t.Execute(writer, Books)
@@ -41,6 +49,7 @@ func RenderAdmin(writer http.ResponseWriter, request *http.Request) {
 
 		Books := types.BookList{
 			Books: books,
+			Name: name,
 		}
 
 		t.Execute(writer, Books)
@@ -57,6 +66,7 @@ func RenderAdmin(writer http.ResponseWriter, request *http.Request) {
 
 		Requests := types.RequestList{
 			Requests: requests,
+			Name: name,
 		}
 
 		t.Execute(writer, Requests)
@@ -68,6 +78,13 @@ func RenderAdmin(writer http.ResponseWriter, request *http.Request) {
 
 func RenderSuperAdmin(writer http.ResponseWriter, request *http.Request) {
 	page := mux.Vars(request)["page"]
+	name, err := models.GetName(request.Context().Value("username").(string))
+
+	if(err!=nil) {
+		writer.WriteHeader(http.StatusInternalServerError)
+		writer.Write([]byte("Could not fetch name"))
+		return
+	}
 	
 	if(page=="home") {
 		t := views.SuperAdminHomePage()
@@ -81,6 +98,7 @@ func RenderSuperAdmin(writer http.ResponseWriter, request *http.Request) {
 
 		Books := types.BookList{
 			Books: books,
+			Name: name,
 		}
 
 		t.Execute(writer, Books)
@@ -97,6 +115,7 @@ func RenderSuperAdmin(writer http.ResponseWriter, request *http.Request) {
 
 		Books := types.BookList{
 			Books: books,
+			Name: name,
 		}
 
 		t.Execute(writer, Books)
@@ -113,6 +132,7 @@ func RenderSuperAdmin(writer http.ResponseWriter, request *http.Request) {
 
 		Requests := types.RequestList{
 			Requests: requests,
+			Name: name,
 		}
 
 		t.Execute(writer, Requests)
@@ -129,6 +149,7 @@ func RenderSuperAdmin(writer http.ResponseWriter, request *http.Request) {
 
 		Users := types.UserList{
 			Users: users,
+			Name: name,
 		}
 
 		t.Execute(writer, Users)

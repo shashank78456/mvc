@@ -10,6 +10,12 @@
 </head>
 <body>
     <nav class="navbar fixed-top bg-info px-2 py-4 text-white fs-5">
+        <div class="container-fluid-center">
+            <span class="col text-center p-2">
+                Welcome {{ .Name }}
+            </span>
+        </div>
+        <div>
         <span class="container-fluid-start">
             <span id="view" class="nav-item px-3">View Books</span>
             <span id="return" class="nav-item px-3">Return Books</span>
@@ -21,6 +27,7 @@
         <span class="col text-end p-2">
             <button type="click" class="btn bg-white btn-block" id="logout">Logout</button>
         </span>
+        </div>
     </nav>
     <div id="filler"></div>
     <div id="view-books">

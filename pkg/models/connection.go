@@ -11,10 +11,10 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func dsn() string {  
+func dsn() string {
 	err := godotenv.Load()
     if (err != nil) {
-        fmt.Println("Error loading .env file")
+        fmt.Println("Error loading .env file", err)
     }
 
 	user := os.Getenv("DB_USER")

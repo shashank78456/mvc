@@ -26,13 +26,16 @@ type Request struct {
 
 type BookList struct {
 	Books []Book `json:"books"`
+	Name string `json:"name"`
 }
 
 type UserList struct {
 	Users []User `json:"users"`
+	Name string `json:"name"`
 }
 
 type RequestList struct {
 	Requests []Request `json:"requests"`
+	Name string `json:"name"`
 }
 

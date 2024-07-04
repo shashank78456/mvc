@@ -19,6 +19,23 @@ go mod tidy
 
 1. Execute `go run main.go`.
 
+- Unit Tests
+
+There are two test files:
+1. `users_test.go` which tests `func GetUserType(string) (int, error)` of users model
+2. `auth_test.go` contains benchmark tests for `func createToken(string, string) (string, error)` , `func HashPassword(string, string) (string, error)` , `func IsPasswordValid(string, string) (bool)` of auth.go in controller
+
+To run `users_test.go`:
+```
+cd pkg/models
+go test -v
+```
+
+To run `auth_test.go`: 
+```
+cd pkg/controller
+go test -bench=.
+```
 - Project Specs
 
 The first user to signup has superadmin privileges.

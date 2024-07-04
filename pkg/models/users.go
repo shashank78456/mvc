@@ -224,3 +224,30 @@ func HasAlreadyRequested(userID int) (bool, error) {
 	return hasAdminRequest==1, nil
 
 }
+
+func GetName(username string) (string, error) {
+	db, err := Connection()
+	if(err!=nil) {
+		fmt.Println("Error in connecting to DB", err)
+		return "", err
+	}
+
+	sql := "SELECT name FROM Users WHERE username = ?"
+	rows, err := db.Query(sql, username)
+
+	if(err!=nil) {
+		fmt.Println("Failed to fetch Users", err)
+		return "", err
+	}
+
+	var name string
+	for rows.Next() {
+		err := rows.Scan(&name)
+		if(err!=nil) {
+			fmt.Println("Error in scanning rows", err)
+			return "", err
+		}
+	}
+
+	return name, nil
+}
