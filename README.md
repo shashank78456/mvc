@@ -11,9 +11,13 @@ go mod vendor
 go mod tidy
 ```
 
-- MySQL
+- Database
 
-`mysql -u root -p < ./config/db.sql` and then enter password.
+1. Execute `mysql -u root -p -e "DROP DATABASE IF EXISTS Library; CREATE DATABASE Library;`
+
+2. From project root directory execute `migrate -path ./database/migrations -database "mysql://username:password@(127.0.0.1:3306)/Library" up`
+
+Replace username and password with your own
 
 - Running Server
 
