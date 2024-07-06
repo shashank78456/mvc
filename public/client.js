@@ -23,7 +23,7 @@ function clientHandler(){
         window.location.href = `http://localhost:3000/client/history`;
     })
     document.getElementById("logout").addEventListener("click", async ()=> {
-        document.cookie = 'token=; Path=/; Expires=Thu, 01 Jan 2000 00:00:01 GMT;';
+        document.cookie = 'accesstoken=; Path=/; Expires=Thu, 01 Jan 2000 00:00:01 GMT;';
         window.location.href = `http://localhost:3000`;
     })
 

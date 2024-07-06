@@ -21,7 +21,7 @@ Replace username and password with your own.
 
 - Running Server
 
-1. Execute `go run main.go`.
+1. Execute `go run ./cmd/main.go`.
 
 - Unit Tests
 

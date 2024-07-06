@@ -70,9 +70,57 @@ func Authenticator(next http.Handler) http.Handler {
 			next.ServeHTTP(writer, request)
 			return
 		}
-		tokenString := request.Header.Get("Cookie")[len("token="):]
-		
+		var tokenName string
+		var tokenString string
+		cookieheader := request.Header.Get("Cookie")
+		if(strings.Contains(cookieheader, "; ")) {
+			cookies := strings.Split(cookieheader, "; ")
+			for i := 0; i < len(cookies); i++ {
+				cookie := strings.Split(cookies[i], "=")
+				tokenName = cookie[0]
+				if cookie[0]=="accesstoken" {
+					tokenString = cookie[1]
+					break
+				}
+			}
+		} else {
+			cookie := strings.Split(request.Header.Get("Cookie"), "=")
+			tokenName = cookie[0]
+			tokenString = cookie[1]
+		}
+
+
+		req := strings.Split(request.URL.String(), "/")[1]
+		if(tokenName!="accesstoken") {
+			if(req=="" || req=="signup") {
+				ckie := http.Cookie{
+					Name: tokenName,
+					Value: "",
+					Expires: time.Unix(0, 0),
+					MaxAge: -1,
+				}
+				http.SetCookie(writer, &ckie)
+				next.ServeHTTP(writer, request)
+				return
+			} else {
+				writer.WriteHeader(http.StatusUnauthorized)
+				writer.Write([]byte("No Token Found"))
+				return
+			}
+		}
+	
 		if (tokenString == "") {
+			if(req=="" || req=="signup") {
+				ckie := http.Cookie{
+					Name: "accesstoken",
+					Value: tokenName,
+					Expires: time.Unix(0, 0),
+					MaxAge: -1,
+				}
+				http.SetCookie(writer, &ckie)
+				next.ServeHTTP(writer, request)
+				return
+			}
 			writer.WriteHeader(http.StatusOK)
 			writer.Write([]byte("No Token Found"))
 			return
@@ -89,7 +137,6 @@ func Authenticator(next http.Handler) http.Handler {
 		contxt := context.WithValue(request.Context(), "username", username)
 		request = request.WithContext(contxt)
 
-		req := strings.Split(request.URL.String(), "/")[1]
 		if(req=="" || req=="signup") {
 			http.Redirect(writer, request, fmt.Sprintf(`http://localhost:3000/%s/home`, userType), http.StatusFound)
 			return
@@ -113,7 +160,7 @@ func SendToken(writer http.ResponseWriter, request *http.Request, username strin
 	}
 	
 	cookie := http.Cookie{
-		Name: "token",
+		Name: "accesstoken",
 		Value: token,
 		Expires: expiry,
 		Path: "/",
