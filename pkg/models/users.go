@@ -64,6 +64,28 @@ func HandleAdminRequest(userID int, isAccepted bool) error {
 			fmt.Println("Failed to update status", err)
 			return err
 		}
+
+		books, err := FetchBorrowedBooks(userID)
+		if(err!=nil) {
+			fmt.Println("Failed to fetch borrowed books", err)
+			return err
+		}
+
+		for i := 0; i < len(books); i++ {
+			book := books[i]
+			err = AddBook(book.BookID)
+			if(err!=nil) {
+				fmt.Println("Failed to add books", err)
+				return err
+			}
+		}
+
+		err = DeleteRequestsOfUser(userID)
+		if(err!=nil) {
+			fmt.Println("Failed to delete requests", err)
+			return err
+		}
+
 	} else {
 		sql := "UPDATE Users SET hasAdminRequest = 0 WHERE userID = ?"
 		_, err = db.Exec(sql, userID)
@@ -257,7 +279,7 @@ func IsUserTableNotEmpty() (bool, error) {
 		return false, err
 	}
 
-	checksql := "SELECT * FROM USERS"
+	checksql := "SELECT * FROM Users"
 	rows, err := db.Query(checksql)
 
 	if(err!=nil) {

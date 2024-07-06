@@ -255,3 +255,20 @@ func IsBorrowed(bookID int) (bool, error) {
 
 	return rows.Next(), nil
 }
+
+func DeleteRequestsOfUser(userid int) (error) {
+	db, err := Connection()
+	if(err!=nil) {
+		fmt.Println("Error in connecting to DB", err)
+		return err
+	}
+
+	sql := "DELETE FROM Requests WHERE userid = ?";
+	_, err = db.Exec(sql, userid)
+	if(err!=nil) {
+		fmt.Println("Failed to Delete Requests", err)
+		return err
+	}
+	
+	return nil
+}

@@ -5,7 +5,7 @@ import (
 	"github.com/shashank78456/mvc/pkg/types"
 )
 
-func AddNewBook(bookname string, author string) (bool, error) {
+func AddNewBook(bookname string, author string, quantity int) (bool, error) {
 	db, err := Connection()
 	if(err!=nil) {
 		fmt.Println("Error in connecting to DB", err)
@@ -20,8 +20,8 @@ func AddNewBook(bookname string, author string) (bool, error) {
 	}
 
 	if(!rows.Next()) {
-		sql := "INSERT INTO Books (bookname, author) VALUES (?, ?)"
-		_, err = db.Exec(sql, bookname, author)
+		sql := "INSERT INTO Books (bookname, author, quantity) VALUES (?, ?, ?)"
+		_, err = db.Exec(sql, bookname, author, quantity)
 
 		if(err!=nil) {
 			fmt.Println("Inserting New Book Failed", err)

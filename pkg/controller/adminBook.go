@@ -16,7 +16,7 @@ func AddNewBook(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	isAdded, err := models.AddNewBook(Book.Bookname, Book.Author)
+	isAdded, err := models.AddNewBook(Book.Bookname, Book.Author, Book.Quantity)
 	if (err!=nil) {
 		writer.WriteHeader(http.StatusInternalServerError)
 		writer.Write([]byte("Failed to Add New Book"))

@@ -32,19 +32,30 @@ function adminHandler(){
         e.preventDefault();
         const bookname = document.getElementById("new-book").value.trim();
         const author = document.getElementById("new-author").value.trim();
-        if(bookname.length!=0) {
-            const response  = await post({bookname: bookname, author: author}, `http://localhost:3000/admin/add_new_book`);
-            const res = await response.json();
-            if(res.isAdded) {
-                window.alert("Added Succesfully");
-                window.location.href = `http://localhost:3000/admin/home`;
+        const quantity = document.getElementById("new-quantity").value.trim();
+        if(quantity>=0) {
+            if(author.length!=0) {
+                if(bookname.length!=0) {
+                    const response  = await post({bookname: bookname, author: author, quantity: parseInt(quantity)}, `http://localhost:3000/superadmin/add_new_book`);
+                    const res = await response.json();
+                    if(res.isAdded) {
+                        window.alert("Added Succesfully");
+                        window.location.href = `http://localhost:3000/superadmin/home`;
+                    }
+                    else {
+                        window.alert("Book already exists");
+                    }
+                }
+                else {
+                    window.alert("Enter Valid Book Name");
+                }
             }
             else {
-                window.alert("Book already exists");
+                window.alert("Enter Valid Author Name");
             }
         }
         else {
-            window.alert("Enter Valid Book Name");
+            window.alert("Quantity should not be negative");
         }
     })
     }
@@ -56,7 +67,6 @@ function adminHandler(){
         addButton[i].addEventListener("click", async (e)=> {
             e.preventDefault();
             await post({bookid: parseInt(addButton[i].value), toDo: "add"}, `http://localhost:3000/admin/add_book`);
-            window.alert("Added Successfully");
             window.location.href = `http://localhost:3000/admin/home`;
         })
     }
@@ -66,7 +76,6 @@ function adminHandler(){
         removeButton[i].addEventListener("click", async (e)=> {
             e.preventDefault();
             await post({bookid: parseInt(removeButton[i].value), toDo: "remove"}, `http://localhost:3000/admin/remove_book`);
-            window.alert("Removed Successfully");
             window.location.href = `http://localhost:3000/admin/home`;
         })
     }

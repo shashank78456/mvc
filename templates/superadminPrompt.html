@@ -18,7 +18,7 @@
         <div>
         <span class="container-fluid-start">
             <span id="catalog" class="nav-item px-3">Manage Catalog</span>
-            <span id="requests" class="nav-item px-3">User Requests</span>
+            <span id="requests" class="nav-item px-3">Book Requests</span>
         </span>
         <span class="container-fluid-end">
             <span class="col text-end p-2">
@@ -43,6 +43,9 @@
                             </div>
                             <div class="form-group py-3">
                                 <input type="text" class="form-control" id="new-author" placeholder="Enter Author" required>
+                            </div>
+                            <div class="form-group py-3">
+                                <input type="number" class="form-control" min="0" id="new-quantity" placeholder="Enter Quantity" required>
                             </div>
                             <div class="col text-center p-2">
                                 <button type="submit" class="btn btn-primary btn-block">Add Book</button>

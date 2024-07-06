@@ -45,6 +45,6 @@ func Connection() (*sql.DB, error) {
         log.Printf("Errors %s pinging DB", err)
         return nil, err
     }
-    log.Printf("Connected to DB successfully\n")
+
 	return db, err
 }
