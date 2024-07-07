@@ -36,11 +36,11 @@ function adminHandler(){
         if(quantity>=0) {
             if(author.length!=0) {
                 if(bookname.length!=0) {
-                    const response  = await post({bookname: bookname, author: author, quantity: parseInt(quantity)}, `http://localhost:3000/superadmin/add_new_book`);
+                    const response  = await post({bookname: bookname, author: author, quantity: parseInt(quantity)}, `http://localhost:3000/admin/add_new_book`);
                     const res = await response.json();
                     if(res.isAdded) {
                         window.alert("Added Succesfully");
-                        window.location.href = `http://localhost:3000/superadmin/home`;
+                        window.location.href = `http://localhost:3000/admin/home`;
                     }
                     else {
                         window.alert("Book already exists");

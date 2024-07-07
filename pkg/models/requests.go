@@ -180,8 +180,8 @@ func FetchBorrowedBooks(userID int) ([]types.Book, error) {
 		return []types.Book{}, err
 	}
 
-	sql := "SELECT bookid FROM Requests WHERE isAccepted = 1 AND isBorrowed = 1"
-	rows, err := db.Query(sql)
+	sql := "SELECT bookid FROM Requests WHERE userID = ? AND isAccepted = 1 AND isBorrowed = 1"
+	rows, err := db.Query(sql, userID)
 	if(err!=nil) {
 		fmt.Println("Failed to Fetch Borrowed Books", err)
 		return []types.Book{}, err
