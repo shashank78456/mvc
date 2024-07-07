@@ -4,24 +4,14 @@
 
 1. Clone the repo using `git clone https://github.com/shashank78456/mvc.git`.
 2. Go to root directory of the repo. `cd mvc`.
-3. Execute the following commands:
-```
-cp .env.sample .env
-go mod vendor
-go mod tidy
-```
-
-- Database
-
-1. Execute `mysql -u root -p -e "DROP DATABASE IF EXISTS Library; CREATE DATABASE Library;"`
-
-2. From project root directory execute `migrate -path ./database/migrations -database "mysql://username:password@(127.0.0.1:3306)/Library" up`
-
-Replace username and password with your own.
+3. Execute `chmod +x ./cmd/setup.sh`.
+4. Run `./cmd/setup.sh`.
 
 - Running Server
 
-1. Execute `go run ./cmd/main.go`.
+1. Run `make migrate_up` and Press Enter.
+2. Execute `chmod +x run.sh`
+3. Run `./run.sh`.
 
 - Unit Tests
 

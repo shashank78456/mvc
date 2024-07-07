@@ -1,0 +1,7 @@
+.DEFAULT_GOAL := help
+
+help:
+		@echo "migrate_up: run migrations up"
+		@echo "migrate_down: run migrations down"
+
+#Migrate commands will be appended on running setup script
