@@ -6,6 +6,6 @@ import (
 )
 
 func main() {
-	fmt.Println("Started Server")
+	fmt.Println("Started Server at localhost on port 3000")
 	api.Start()
 }

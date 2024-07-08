@@ -13,10 +13,17 @@ then
         exit -1
     fi
 
-    echo "-------------Apache Installation-------------"
-    sudo apt install apache2 -y
-    sudo a2enmod proxy proxy_http
+    if [[ command -v apache2 >/dev/null 2>&1 ]]
+    then
+        echo "Apache already installed"
+    else
+        echo "-------------Apache Installation-------------"
+        sudo apt install apache2 -y
+        echo "------------Installation Complete------------"
+    fi
 
+    echo "--------------Configuring Apache--------------"
+    sudo a2enmod proxy proxy_http
     sudo bash -c 'cat >> /etc/apache2/sites-available/mvc.sdslabs.local.conf <<EOL
     <VirtualHost *:80>
         ServerName mvc.sdslabs.local
@@ -33,10 +40,9 @@ then
     echo "127.0.0.1 mvc.sdslabs.local" | sudo tee -a /etc/hosts > /dev/null
     sudo a2dissite /etc/apache2/sites-available/000-default.conf
     sudo apache2ctl configtest
-    echo "------------Installation Complete------------"
-
     sudo systemctl restart apache2
     sudo systemctl status apache2
+    echo "---------------Configured Apache--------------"
 
     echo "Running on Apache Server..."
     echo "Control + C to stop server"

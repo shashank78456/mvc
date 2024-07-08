@@ -135,7 +135,7 @@ func RenderSuperAdmin(writer http.ResponseWriter, request *http.Request) {
 
 		t.Execute(writer, Requests)
 
-	} else if(page=="adreq") {
+	} else if(page=="adminrequests") {
 		t := views.SuperAdminSuperPage()
 		users, err := models.FetchUsersWithAdminRequest()
 

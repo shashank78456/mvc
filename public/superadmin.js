@@ -22,7 +22,7 @@ function superadminHandler(){
 
     try {
     document.getElementById("adreq").addEventListener("click", async ()=> {
-        window.location.href = `http://localhost:3000/superadmin/adreq`;
+        window.location.href = `http://localhost:3000/superadmin/adminrequests`;
     })
     }
     catch{};
@@ -119,7 +119,7 @@ function superadminHandler(){
         acceptButtonR[i].addEventListener("click", async ()=> {
             await post({userid: parseInt(acceptButtonR[i].value)}, `http://localhost:3000/superadmin/accept_admin`);
             window.alert("Accepted Successfully");
-            window.location.href = `http://localhost:3000/superadmin/adreq`;
+            window.location.href = `http://localhost:3000/superadmin/adminrequests`;
         })
     }
     
@@ -127,7 +127,7 @@ function superadminHandler(){
         denyButtonR[i].addEventListener("click", async ()=> {
             await post({userid: parseInt(denyButtonR[i].value)}, `http://localhost:3000/superadmin/deny_admin`);
             window.alert("Denied Successfully");
-            window.location.href = `http://localhost:3000/superadmin/adreq`;
+            window.location.href = `http://localhost:3000/superadmin/adminrequests`;
         })
     }
     }
