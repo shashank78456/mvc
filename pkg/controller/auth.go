@@ -142,7 +142,7 @@ func Authenticator(next http.Handler) http.Handler {
 			return
 		} else if (!(req==userType)) {
 			writer.WriteHeader(http.StatusUnauthorized)
-			writer.Write([]byte("Forbidden"))
+			writer.Write([]byte("Unauthorized Access"))
 			return
 		}
 
