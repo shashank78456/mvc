@@ -20,28 +20,28 @@ func verifyToken(tokenString string) (string, string, error) {
 		return secretKey, nil
 	})
 
-	if (err!=nil) {
+	if err != nil {
 		return "", "", err
 	}
 
-	if (!token.Valid) {
+	if !token.Valid {
 		return "", "", fmt.Errorf("forbidden")
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
-	if (!ok) {
+	if !ok {
 		return "", "", fmt.Errorf("username not found")
 	}
 
 	username, ok := claims["username"].(string)
 
-	if (!ok) {
+	if !ok {
 		return "", "", fmt.Errorf("usertype not found")
 	}
 
 	userType, ok := claims["userType"].(string)
-	
-	if (!ok) {
+
+	if !ok {
 		return "", "", fmt.Errorf("username not found")
 	}
 
@@ -51,34 +51,34 @@ func verifyToken(tokenString string) (string, string, error) {
 func createToken(username string, userType string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"username": username,
-		"userType" : userType,
-		"expiry": expiry,
+		"userType": userType,
+		"expiry":   expiry,
 	})
 
 	tokenString, err := token.SignedString(secretKey)
-	if (err!=nil) {
+	if err != nil {
 		fmt.Println("Token Creation Failed", err)
 		return "", err
 	}
-	
+
 	return tokenString, nil
 }
 
 func Authenticator(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
-		if(len(request.Header.Get("Cookie"))==0) {
+		if len(request.Header.Get("Cookie")) == 0 {
 			next.ServeHTTP(writer, request)
 			return
 		}
 		var tokenName string
 		var tokenString string
 		cookieheader := request.Header.Get("Cookie")
-		if(strings.Contains(cookieheader, "; ")) {
+		if strings.Contains(cookieheader, "; ") {
 			cookies := strings.Split(cookieheader, "; ")
 			for i := 0; i < len(cookies); i++ {
 				cookie := strings.Split(cookies[i], "=")
 				tokenName = cookie[0]
-				if cookie[0]=="accesstoken" {
+				if cookie[0] == "accesstoken" {
 					tokenString = cookie[1]
 					break
 				}
@@ -89,15 +89,14 @@ func Authenticator(next http.Handler) http.Handler {
 			tokenString = cookie[1]
 		}
 
-
 		req := strings.Split(request.URL.String(), "/")[1]
-		if(tokenName!="accesstoken") {
-			if(req=="" || req=="signup") {
+		if tokenName != "accesstoken" {
+			if req == "" || req == "signup" {
 				ckie := http.Cookie{
-					Name: tokenName,
-					Value: "",
+					Name:    tokenName,
+					Value:   "",
 					Expires: time.Unix(0, 0),
-					MaxAge: -1,
+					MaxAge:  -1,
 				}
 				http.SetCookie(writer, &ckie)
 				next.ServeHTTP(writer, request)
@@ -108,14 +107,14 @@ func Authenticator(next http.Handler) http.Handler {
 				return
 			}
 		}
-	
-		if (tokenString == "") {
-			if(req=="" || req=="signup") {
+
+		if tokenString == "" {
+			if req == "" || req == "signup" {
 				ckie := http.Cookie{
-					Name: "accesstoken",
-					Value: tokenName,
+					Name:    "accesstoken",
+					Value:   tokenName,
 					Expires: time.Unix(0, 0),
-					MaxAge: -1,
+					MaxAge:  -1,
 				}
 				http.SetCookie(writer, &ckie)
 				next.ServeHTTP(writer, request)
@@ -128,7 +127,7 @@ func Authenticator(next http.Handler) http.Handler {
 
 		username, userType, err := verifyToken(tokenString)
 
-		if (err!=nil) {
+		if err != nil {
 			writer.WriteHeader(http.StatusUnauthorized)
 			writer.Write([]byte("Forbidden"))
 			return
@@ -137,10 +136,10 @@ func Authenticator(next http.Handler) http.Handler {
 		contxt := context.WithValue(request.Context(), "username", username)
 		request = request.WithContext(contxt)
 
-		if(req=="" || req=="signup") {
+		if req == "" || req == "signup" {
 			http.Redirect(writer, request, fmt.Sprintf(`http://localhost:3000/%s/home`, userType), http.StatusFound)
 			return
-		} else if (!(req==userType)) {
+		} else if !(req == userType) {
 			writer.WriteHeader(http.StatusUnauthorized)
 			writer.Write([]byte("Unauthorized Access"))
 			return
@@ -153,17 +152,17 @@ func Authenticator(next http.Handler) http.Handler {
 func SendToken(writer http.ResponseWriter, request *http.Request, username string, userType string) http.Cookie {
 	token, err := createToken(username, userType)
 
-	if (err!=nil) {
+	if err != nil {
 		writer.WriteHeader(http.StatusInternalServerError)
 		writer.Write([]byte("Token Creation failed"))
 		return http.Cookie{}
 	}
-	
+
 	cookie := http.Cookie{
-		Name: "accesstoken",
-		Value: token,
+		Name:    "accesstoken",
+		Value:   token,
 		Expires: expiry,
-		Path: "/",
+		Path:    "/",
 	}
 
 	return cookie
@@ -171,8 +170,8 @@ func SendToken(writer http.ResponseWriter, request *http.Request, username strin
 
 func HashPassword(password string) (string, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 10)
-	if (err!=nil) {
-		return "",err
+	if err != nil {
+		return "", err
 	}
 
 	return string(hashedPassword), nil
@@ -180,5 +179,5 @@ func HashPassword(password string) (string, error) {
 
 func IsPasswordValid(password string, originalPassword string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(originalPassword), []byte(password))
-	return err==nil
+	return err == nil
 }

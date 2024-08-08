@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../public/styles.css">
     <title>Admin Page</title>
 </head>
+
 <body>
     <nav class="navbar fixed-top bg-info px-2 py-4 text-white fs-5">
         <div class="container-fluid-center">
@@ -16,24 +21,24 @@
             </span>
         </div>
         <div>
-        <span class="container-fluid-start">
-            <span id="catalog" class="nav-item px-3">Manage Catalog</span>
-            <span id="requests" class="nav-item px-3">Book Requests</span>
-        </span>
-        <span class="container-fluid-end">
-        <span class="col text-end p-2">
-            <button type="click" id="adreq" class="btn bg-white btn-block">Manage Admins</button>
-        </span>
-        <span class="col text-end p-2">
-            <button type="click" class="btn bg-white btn-block" id="logout">Logout</button>
-        </span>
+            <span class="container-fluid-start">
+                <span id="catalog" class="nav-item px-3">Manage Catalog</span>
+                <span id="requests" class="nav-item px-3">Book Requests</span>
+            </span>
+            <span class="container-fluid-end">
+                <span class="col text-end p-2">
+                    <button type="click" id="adreq" class="btn bg-white btn-block">Manage Admins</button>
+                </span>
+                <span class="col text-end p-2">
+                    <button type="click" class="btn bg-white btn-block" id="logout">Logout</button>
+                </span>
         </div>
     </nav>
     <div id="filler"></div>
     <div id="manage-catalog">
         <div class="container py-5">
-        <div class="row justify-content-center">
-            <h3 class="text-center">Catalog</h3>
+            <div class="row justify-content-center">
+                <h3 class="text-center">Catalog</h3>
                 <div class="col text-center py-2">
                     <button type="button" class="btn btn-primary btn-block" id="prompt-open">Add Books</button>
                 </div>
@@ -45,24 +50,28 @@
                             <div class="text-start px-2">Quantity: {{ .Quantity }}</div>
                             <div class="col text-end py-2">
                                 <span class="add-div col text-end p-2">
-                                    <button type="click" class="add btn bg-white btn-block" value="{{ .BookID }}">Add</button>
+                                    <button type="click" class="add btn bg-white btn-block"
+                                        value="{{ .BookID }}">Add</button>
                                 </span>
                                 {{ if ne .Quantity 0 }}
                                 <span class="remove-div col text-end p-2">
-                                    <button type="click" class="remove btn bg-white btn-block" value="{{ .BookID }}">Remove</button>
+                                    <button type="click" class="remove btn bg-white btn-block"
+                                        value="{{ .BookID }}">Remove</button>
                                 </span>
-                                {{ end }} 
+                                {{ end }}
                                 <span class="del-div col text-end p-2">
-                                    <button type="click" class="delete btn bg-white btn-block" value="{{ .BookID }}">Delete</button>
+                                    <button type="click" class="delete btn bg-white btn-block"
+                                        value="{{ .BookID }}">Delete</button>
                                 </span>
                             </div>
                         </div>
                     </li>
                     {{ end }}
                 </ol>
-        </div>
+            </div>
         </div>
     </div>
 </body>
 <script src="../public/superadmin.js"></script>
+
 </html>

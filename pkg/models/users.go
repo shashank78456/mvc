@@ -7,42 +7,42 @@ import (
 
 func CreateUser(username string, password string, name string) error {
 	db, err := Connection()
-	if(err!=nil) {
+	if err != nil {
 		fmt.Println("Error in connecting to DB", err)
 		return err
 	}
 	userType := "client"
 
 	isUserTableNotEmpty, err := IsUserTableNotEmpty()
-	if(err!=nil) {
+	if err != nil {
 		fmt.Println("Failed to check existing users", err)
 		return err
 	}
 
-	if(!isUserTableNotEmpty) {
+	if !isUserTableNotEmpty {
 		userType = "superadmin"
 	}
 
 	sql := "INSERT INTO Users (username, password, name, userType) VALUES (?, ?, ?, ?)"
 	_, err = db.Exec(sql, username, password, name, userType)
 
-	if(err!=nil) {
+	if err != nil {
 		fmt.Println("Creating New User Failed", err)
 		return err
 	}
 	return nil
 }
 
-func RequestForAdmin(userID int) (error) {
+func RequestForAdmin(userID int) error {
 	db, err := Connection()
-	if(err!=nil) {
+	if err != nil {
 		fmt.Println("Error in connecting to DB", err)
 		return err
 	}
 
 	sql := "UPDATE Users SET hasAdminRequest = 1 WHERE userID = ?"
 	_, err = db.Exec(sql, userID)
-	if(err!=nil) {
+	if err != nil {
 		fmt.Println("Failed to fetch Status", err)
 		return err
 	}
@@ -52,21 +52,21 @@ func RequestForAdmin(userID int) (error) {
 
 func HandleAdminRequest(userID int, isAccepted bool) error {
 	db, err := Connection()
-	if(err!=nil) {
+	if err != nil {
 		fmt.Println("Error in connecting to DB", err)
 		return err
 	}
 
-	if(isAccepted) {
+	if isAccepted {
 		sql := "UPDATE Users SET hasAdminRequest = 0, userType = 'admin' WHERE userID = ?"
 		_, err = db.Exec(sql, userID)
-		if(err!=nil) {
+		if err != nil {
 			fmt.Println("Failed to update status", err)
 			return err
 		}
 
 		books, err := FetchBorrowedBooks(userID)
-		if(err!=nil) {
+		if err != nil {
 			fmt.Println("Failed to fetch borrowed books", err)
 			return err
 		}
@@ -74,14 +74,14 @@ func HandleAdminRequest(userID int, isAccepted bool) error {
 		for i := 0; i < len(books); i++ {
 			book := books[i]
 			err = AddBook(book.BookID)
-			if(err!=nil) {
+			if err != nil {
 				fmt.Println("Failed to add books", err)
 				return err
 			}
 		}
 
 		err = DeleteRequestsOfUser(userID)
-		if(err!=nil) {
+		if err != nil {
 			fmt.Println("Failed to delete requests", err)
 			return err
 		}
@@ -89,7 +89,7 @@ func HandleAdminRequest(userID int, isAccepted bool) error {
 	} else {
 		sql := "UPDATE Users SET hasAdminRequest = 0 WHERE userID = ?"
 		_, err = db.Exec(sql, userID)
-		if(err!=nil) {
+		if err != nil {
 			fmt.Println("Failed to update status", err)
 			return err
 		}
@@ -100,14 +100,14 @@ func HandleAdminRequest(userID int, isAccepted bool) error {
 
 func FetchUsersWithAdminRequest() ([]types.User, error) {
 	db, err := Connection()
-	if(err!=nil) {
+	if err != nil {
 		fmt.Println("Error in connecting to DB", err)
 		return []types.User{}, err
 	}
 
 	sql := "SELECT userid, username FROM Users WHERE hasAdminRequest = 1"
 	rows, err := db.Query(sql)
-	if(err!=nil) {
+	if err != nil {
 		fmt.Println("Failed to fetch Users", err)
 		return []types.User{}, err
 	}
@@ -116,7 +116,7 @@ func FetchUsersWithAdminRequest() ([]types.User, error) {
 	for rows.Next() {
 		var user types.User
 		err := rows.Scan(&user.UserID, &user.Username)
-		if(err!=nil) {
+		if err != nil {
 			fmt.Println("Error scanning rows", err)
 			return []types.User{}, err
 		}
@@ -128,14 +128,14 @@ func FetchUsersWithAdminRequest() ([]types.User, error) {
 
 func GetUserID(username string) (int, error) {
 	db, err := Connection()
-	if(err!=nil) {
+	if err != nil {
 		fmt.Println("Error in connecting to DB", err)
 		return -1, err
 	}
 
 	sql := "SELECT userID FROM Users WHERE username = ?"
 	rows, err := db.Query(sql, username)
-	if(err!=nil) {
+	if err != nil {
 		fmt.Println("Failed to fetch userID", err)
 		return -1, err
 	}
@@ -143,7 +143,7 @@ func GetUserID(username string) (int, error) {
 	var userID int
 	for rows.Next() {
 		err := rows.Scan(&userID)
-		if(err!=nil) {
+		if err != nil {
 			fmt.Println("Error scanning rows", err)
 			return -1, err
 		}
@@ -153,14 +153,14 @@ func GetUserID(username string) (int, error) {
 
 func GetPassword(username string) (string, error) {
 	db, err := Connection()
-	if(err!=nil) {
+	if err != nil {
 		fmt.Println("Error in connecting to DB", err)
 		return "", err
 	}
 
 	sql := "SELECT password FROM Users WHERE username = ?"
 	rows, err := db.Query(sql, username)
-	if(err!=nil) {
+	if err != nil {
 		fmt.Println("Failed to fetch password", err)
 		return "", err
 	}
@@ -168,7 +168,7 @@ func GetPassword(username string) (string, error) {
 	var password string
 	for rows.Next() {
 		err := rows.Scan(&password)
-		if(err!=nil) {
+		if err != nil {
 			fmt.Println("Error scanning rows", err)
 			return "", err
 		}
@@ -178,14 +178,14 @@ func GetPassword(username string) (string, error) {
 
 func GetUserType(username string) (string, error) {
 	db, err := Connection()
-	if(err!=nil) {
+	if err != nil {
 		fmt.Println("Error in connecting to DB", err)
 		return "", err
 	}
 
 	sql := "SELECT userType FROM Users WHERE username = ?"
 	rows, err := db.Query(sql, username)
-	if(err!=nil) {
+	if err != nil {
 		fmt.Println("Failed to fetch userType", err)
 		return "", err
 	}
@@ -193,7 +193,7 @@ func GetUserType(username string) (string, error) {
 	var userType string
 	for rows.Next() {
 		err := rows.Scan(&userType)
-		if(err!=nil) {
+		if err != nil {
 			fmt.Println("Error scanning rows", err)
 			return "", err
 		}
@@ -203,14 +203,14 @@ func GetUserType(username string) (string, error) {
 
 func IsUserExist(username string) (bool, error) {
 	db, err := Connection()
-	if(err!=nil) {
+	if err != nil {
 		fmt.Println("Error in connecting to DB", err)
 		return false, err
 	}
-	
+
 	checksql := "SELECT * FROM Users WHERE username = ?"
 	rows, err := db.Query(checksql, username)
-	if(err!=nil) {
+	if err != nil {
 		fmt.Println("Failed to fetch existing users", err)
 		return false, err
 	}
@@ -220,34 +220,34 @@ func IsUserExist(username string) (bool, error) {
 
 func HasAlreadyRequested(userID int) (bool, error) {
 	db, err := Connection()
-	if(err!=nil) {
+	if err != nil {
 		fmt.Println("Error in connecting to DB", err)
 		return false, err
 	}
 
 	sql := "SELECT hasAdminRequest FROM Users WHERE userID = ?"
 	rows, err := db.Query(sql, userID)
-	if(err!=nil) {
+	if err != nil {
 		fmt.Println("Failed to fetch Status", err)
 		return false, err
 	}
-	
+
 	var hasAdminRequest int
 	for rows.Next() {
 		err := rows.Scan(&hasAdminRequest)
-		if(err!=nil) {
+		if err != nil {
 			fmt.Println("Error in scanning rows", err)
 			return false, err
 		}
 	}
 
-	return hasAdminRequest==1, nil
+	return hasAdminRequest == 1, nil
 
 }
 
 func GetName(username string) (string, error) {
 	db, err := Connection()
-	if(err!=nil) {
+	if err != nil {
 		fmt.Println("Error in connecting to DB", err)
 		return "", err
 	}
@@ -255,7 +255,7 @@ func GetName(username string) (string, error) {
 	sql := "SELECT name FROM Users WHERE username = ?"
 	rows, err := db.Query(sql, username)
 
-	if(err!=nil) {
+	if err != nil {
 		fmt.Println("Failed to fetch Users", err)
 		return "", err
 	}
@@ -263,7 +263,7 @@ func GetName(username string) (string, error) {
 	var name string
 	for rows.Next() {
 		err := rows.Scan(&name)
-		if(err!=nil) {
+		if err != nil {
 			fmt.Println("Error in scanning rows", err)
 			return "", err
 		}
@@ -274,7 +274,7 @@ func GetName(username string) (string, error) {
 
 func IsUserTableNotEmpty() (bool, error) {
 	db, err := Connection()
-	if(err!=nil) {
+	if err != nil {
 		fmt.Println("Error in connecting to DB", err)
 		return false, err
 	}
@@ -282,12 +282,12 @@ func IsUserTableNotEmpty() (bool, error) {
 	checksql := "SELECT * FROM Users"
 	rows, err := db.Query(checksql)
 
-	if(err!=nil) {
+	if err != nil {
 		fmt.Println("Fetching Users Failed", err)
 		return false, err
 	}
 
-	if(!rows.Next()) {
+	if !rows.Next() {
 		return false, err
 	}
 	return true, err

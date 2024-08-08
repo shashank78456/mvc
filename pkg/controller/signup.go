@@ -17,22 +17,22 @@ func RenderSignup(writer http.ResponseWriter, request *http.Request) {
 func HandleSignup(writer http.ResponseWriter, request *http.Request) {
 	var User types.User
 	err := json.NewDecoder(request.Body).Decode(&User)
-	if (err!=nil) {
+	if err != nil {
 		writer.WriteHeader(http.StatusInternalServerError)
 		writer.Write([]byte("Error Decoding struct"))
 		return
 	}
 
 	isUserExist, err := models.IsUserExist(User.Username)
-	if(err!=nil) {
+	if err != nil {
 		writer.WriteHeader(http.StatusInternalServerError)
 		writer.Write([]byte("Could not check User existence"))
 		return
 	}
 
-	if(!isUserExist) {
+	if !isUserExist {
 		isUserTableNotEmpty, err := models.IsUserTableNotEmpty()
-		if (err!=nil) {
+		if err != nil {
 			writer.WriteHeader(http.StatusInternalServerError)
 			writer.Write([]byte("Error in getting existing users"))
 			return
@@ -45,14 +45,14 @@ func HandleSignup(writer http.ResponseWriter, request *http.Request) {
 
 		hashedPassword, err := HashPassword(User.Password)
 
-		if(err!=nil) {
+		if err != nil {
 			writer.WriteHeader(http.StatusInternalServerError)
 			writer.Write([]byte("Error hashing password"))
 			return
 		}
 
 		err = models.CreateUser(User.Username, hashedPassword, User.Name)
-		if(err!=nil) {
+		if err != nil {
 			writer.WriteHeader(http.StatusInternalServerError)
 			writer.Write([]byte("User Creation Failed"))
 			return
@@ -67,7 +67,7 @@ func HandleSignup(writer http.ResponseWriter, request *http.Request) {
 		validity["userType"] = userType
 		response, err := json.Marshal(validity)
 
-		if (err!=nil) {
+		if err != nil {
 			writer.WriteHeader(http.StatusInternalServerError)
 			writer.Write([]byte("Error in JSON Marshal"))
 			return
@@ -81,7 +81,7 @@ func HandleSignup(writer http.ResponseWriter, request *http.Request) {
 		validity["userType"] = ""
 		response, err := json.Marshal(validity)
 
-		if (err!=nil) {
+		if err != nil {
 			writer.WriteHeader(http.StatusInternalServerError)
 			writer.Write([]byte("Error in JSON Marshal"))
 			return

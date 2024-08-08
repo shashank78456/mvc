@@ -1,9 +1,9 @@
 package api
 
-import(
-	"net/http"
-	"github.com/shashank78456/mvc/pkg/controller"
+import (
 	"github.com/gorilla/mux"
+	"github.com/shashank78456/mvc/pkg/controller"
+	"net/http"
 )
 
 func Start() {
@@ -27,7 +27,7 @@ func Start() {
 	adminRouter.HandleFunc("/add_book", controller.AddBook).Methods("POST")
 	adminRouter.HandleFunc("/remove_book", controller.RemoveBook).Methods("POST")
 	adminRouter.HandleFunc("/delete_book", controller.DeleteBook).Methods("DELETE")
-	adminRouter.HandleFunc("/accept_request", controller.AcceptRequest).Methods("POST")
+	adminRouter.HandleFunc("/handle_request", controller.HandleRequest).Methods("POST")
 
 	superadminRouter := router.PathPrefix("/superadmin").Subrouter()
 	superadminRouter.Use(controller.Authenticator)
@@ -36,7 +36,7 @@ func Start() {
 	superadminRouter.HandleFunc("/add_book", controller.AddBook).Methods("POST")
 	superadminRouter.HandleFunc("/remove_book", controller.RemoveBook).Methods("POST")
 	superadminRouter.HandleFunc("/delete_book", controller.DeleteBook).Methods("DELETE")
-	superadminRouter.HandleFunc("/accept_request", controller.AcceptRequest).Methods("POST")
+	superadminRouter.HandleFunc("/handle_request", controller.HandleRequest).Methods("POST")
 	superadminRouter.HandleFunc("/accept_admin", controller.AcceptAdmin).Methods("POST")
 	superadminRouter.HandleFunc("/deny_admin", controller.DenyAdmin).Methods("POST")
 
