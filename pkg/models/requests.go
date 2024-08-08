@@ -251,7 +251,7 @@ func FetchHistory(userID int) ([]types.Book, error) {
 		return []types.Book{}, err
 	}
 
-	sql := "SELECT bookid FROM Requests WHERE userID = ? AND isAccepted = 1"
+	sql := "SELECT bookid, isBorrowed FROM Requests WHERE userID = ? AND isAccepted = 1"
 	rows, err := db.Query(sql, userID)
 	if err != nil {
 		fmt.Println("Failed to Fetch History", err)
@@ -261,12 +261,19 @@ func FetchHistory(userID int) ([]types.Book, error) {
 	var fetchHistory []types.Book
 	for rows.Next() {
 		var bookid int
-		err := rows.Scan(&bookid)
+		var isBorrowed int
+		err := rows.Scan(&bookid, &isBorrowed)
 		if err != nil {
 			fmt.Println("Error in scanning rows", err)
 			return []types.Book{}, err
 		}
 		book, err := fetchBook(bookid)
+		if isBorrowed==1 {
+			book.Status = "Borrowed"
+		} else {
+			book.Status = "Returned"
+		}
+		
 		if err != nil {
 			fmt.Println("Error in fetching book", err)
 			return []types.Book{}, err

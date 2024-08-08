@@ -14,6 +14,7 @@ type Book struct {
 	Author                       string `json:"author"`
 	Quantity                     int    `json:"quantity"`
 	IsAlreadyRequestedOrBorrowed bool   `json:"isAlreadyRequestedOrBorrowed"`
+	Status                       string `json:"status"`
 }
 
 type Request struct {
