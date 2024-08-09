@@ -65,7 +65,7 @@ func HandleAdminRequest(userID int, isAccepted bool) error {
 			return err
 		}
 
-		books, err := FetchBorrowedBooks(userID)
+		books, err := FetchBorrowedAndToBeReturnedBooks(userID)
 		if err != nil {
 			fmt.Println("Failed to fetch borrowed books", err)
 			return err

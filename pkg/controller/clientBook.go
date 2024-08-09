@@ -64,7 +64,7 @@ func ReturnBook(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	err = models.CloseRequest(userID, Book.BookID)
+	err = models.ReturnRequest(userID, Book.BookID)
 
 	if err != nil {
 		writer.WriteHeader(http.StatusInternalServerError)

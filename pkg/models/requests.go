@@ -12,7 +12,7 @@ func CreateRequest(userID int, bookID int) (bool, error) {
 		return false, err
 	}
 
-	checksql := "SELECT * FROM Requests WHERE userID = ? AND bookID = ? AND ((isBorrowed = 0 AND isAccepted = 0) OR (isBorrowed = 1 AND isAccepted = 1))"
+	checksql := "SELECT * FROM Requests WHERE userID = ? AND bookID = ? AND ((isBorrowed = 0 AND isAccepted = 0) OR (isBorrowed = 1 AND isAccepted = 1) OR (isBorrowed = 1 AND isAccepted = 0))"
 	rows, err := db.Query(checksql, userID, bookID)
 	if err != nil {
 		fmt.Println("Failed to fetch existing Requests", err)
@@ -58,41 +58,66 @@ func AcceptRequest(requestID int) (bool, error) {
 		}
 	}
 
-	checksql := "SELECT quantity FROM Books WHERE bookID = ?"
-	rows, err = db.Query(checksql, bookID)
+	checsql := "SELECT isBorrowed FROM Requests WHERE requestID = ? "
+	rows, err = db.Query(checsql, requestID)
 	if err != nil {
-		fmt.Println("Fetching Book Quantity Failed", err)
+		fmt.Println("Fetching Request Type Failed", err)
 		return false, err
 	}
 
-	var quantity int
+	var isBorrowed bool
 	for rows.Next() {
-		err := rows.Scan(&quantity)
+		err := rows.Scan(&isBorrowed)
 		if err != nil {
 			fmt.Println("Error scanning rows", err)
 			return false, err
 		}
 	}
 
-	if quantity > 0 {
-
-		sql := "UPDATE Requests SET isBorrowed = 1, isAccepted = 1 WHERE requestID = ?"
-		_, err = db.Exec(sql, requestID)
+	if isBorrowed {
+		err = CloseRequest(requestID)
 		if err != nil {
-			fmt.Println("Updating Request Failed", err)
+			fmt.Println("Error in closing request", err)
 			return false, err
 		}
-
-		booksql := "UPDATE Books SET quantity = quantity - 1 WHERE bookID = ?"
-		_, err = db.Exec(booksql, bookID)
-		if err != nil {
-			fmt.Println("Updating Book Quantity Failed", err)
-			return false, err
-		}
-
 		return true, nil
 	} else {
-		return false, nil
+		checksql := "SELECT quantity FROM Books WHERE bookID = ?"
+		rows, err = db.Query(checksql, bookID)
+		if err != nil {
+			fmt.Println("Fetching Book Quantity Failed", err)
+			return false, err
+		}
+
+		var quantity int
+		for rows.Next() {
+			err := rows.Scan(&quantity)
+			if err != nil {
+				fmt.Println("Error scanning rows", err)
+				return false, err
+			}
+		}
+
+		if quantity > 0 {
+
+			sql := "UPDATE Requests SET isBorrowed = 1, isAccepted = 1 WHERE requestID = ?"
+			_, err = db.Exec(sql, requestID)
+			if err != nil {
+				fmt.Println("Updating Request Failed", err)
+				return false, err
+			}
+
+			booksql := "UPDATE Books SET quantity = quantity - 1 WHERE bookID = ?"
+			_, err = db.Exec(booksql, bookID)
+			if err != nil {
+				fmt.Println("Updating Book Quantity Failed", err)
+				return false, err
+			}
+
+			return true, nil
+		} else {
+			return false, nil
+		}
 	}
 }
 
@@ -103,30 +128,73 @@ func DenyRequest(requestID int) error {
 		return err
 	}
 
-	sql := "DELETE FROM Requests WHERE requestID = ?"
-	_, err = db.Exec(sql, requestID)
+	checksql := "SELECT isBorrowed FROM Requests WHERE requestID = ? "
+	rows, err := db.Query(checksql, requestID)
 	if err != nil {
-		fmt.Println("Deleting Request Failed", err)
+		fmt.Println("Fetching Request Type Failed", err)
 		return err
 	}
 
-	return nil
+	var isBorrowed bool
+	for rows.Next() {
+		err := rows.Scan(&isBorrowed)
+		if err != nil {
+			fmt.Println("Error scanning rows", err)
+			return err
+		}
+	}
+
+	if isBorrowed {
+		sql := "UPDATE Requests SET isAccepted = 1 WHERE requestID = ? "
+		_, err = db.Exec(sql, requestID)
+		if err != nil {
+			fmt.Println("Denying Request Failed", err)
+			return err
+		}
+
+		return nil
+	} else {
+		sql := "DELETE FROM Requests WHERE requestID = ?"
+		_, err = db.Exec(sql, requestID)
+		if err != nil {
+			fmt.Println("Deleting Request Failed", err)
+			return err
+		}
+
+		return nil
+	}
+
 }
 
-func CloseRequest(userID int, bookID int) error {
+func CloseRequest(requestID int) error {
 	db, err := Connection()
 	if err != nil {
 		fmt.Println("Error in connecting to DB", err)
 		return err
 	}
 
-	sql := "UPDATE Requests SET isBorrowed = 0 WHERE userID = ? and bookID = ?"
-	_, err = db.Exec(sql, userID, bookID)
+	sql := "UPDATE Requests SET isBorrowed = 0 , isAccepted = 1 WHERE requestID = ? "
+	_, err = db.Exec(sql, requestID)
 	if err != nil {
 		fmt.Println("Closing Request Failed", err)
 		return err
 	}
 
+	getsql := "SELECT bookID FROM Requests WHERE requestID = ? "
+	rows, err := db.Query(getsql, requestID)
+	if err != nil {
+		fmt.Println("Error in fetching bookID", err)
+		return err
+	}
+
+	var bookID int
+	for rows.Next() {
+		err = rows.Scan(&bookID)
+		if err != nil {
+			fmt.Println("Error scanning rows", err)
+			return err
+		}
+	}
 	booksql := "UPDATE Books SET quantity = quantity + 1 WHERE bookID = ?"
 	_, err = db.Exec(booksql, bookID)
 	if err != nil {
@@ -161,7 +229,7 @@ func FetchRequests() ([]types.Request, error) {
 		return []types.Request{}, err
 	}
 
-	sql := "SELECT requestID, userID, bookID FROM Requests WHERE isAccepted = 0"
+	sql := "SELECT requestID, userID, bookID, isBorrowed FROM Requests WHERE isAccepted = 0"
 	rows, err := db.Query(sql)
 	if err != nil {
 		fmt.Println("Failed to Fetch Requests", err)
@@ -171,7 +239,7 @@ func FetchRequests() ([]types.Request, error) {
 	var fetchRequests []types.Request
 	for rows.Next() {
 		var request types.Request
-		err := rows.Scan(&request.RequestID, &request.UserID, &request.BookID)
+		err := rows.Scan(&request.RequestID, &request.UserID, &request.BookID, &request.IsBorrowed)
 		if err != nil {
 			fmt.Println("Error in scanning request rows", err)
 			return []types.Request{}, err
@@ -244,6 +312,39 @@ func FetchBorrowedBooks(userID int) ([]types.Book, error) {
 	return fetchBorrowedBooks, nil
 }
 
+func FetchBorrowedAndToBeReturnedBooks(userID int) ([]types.Book, error) {
+	db, err := Connection()
+	if err != nil {
+		fmt.Println("Error in connecting to DB", err)
+		return []types.Book{}, err
+	}
+
+	sql := "SELECT bookid FROM Requests WHERE userID = ? AND ((isAccepted = 1 AND isBorrowed = 1) OR (isAccepted = 0 AND isBorrowed = 1))"
+	rows, err := db.Query(sql, userID)
+	if err != nil {
+		fmt.Println("Failed to Fetch Borrowed Books", err)
+		return []types.Book{}, err
+	}
+
+	var fetchBorrowedBooks []types.Book
+	for rows.Next() {
+		var bookid int
+		err := rows.Scan(&bookid)
+		if err != nil {
+			fmt.Println("Error in scanning rows", err)
+			return []types.Book{}, err
+		}
+		book, err := fetchBook(bookid)
+		if err != nil {
+			fmt.Println("Error in fetching book", err)
+			return []types.Book{}, err
+		}
+		fetchBorrowedBooks = append(fetchBorrowedBooks, book)
+	}
+
+	return fetchBorrowedBooks, nil
+}
+
 func FetchHistory(userID int) ([]types.Book, error) {
 	db, err := Connection()
 	if err != nil {
@@ -251,7 +352,7 @@ func FetchHistory(userID int) ([]types.Book, error) {
 		return []types.Book{}, err
 	}
 
-	sql := "SELECT bookid, isBorrowed FROM Requests WHERE userID = ? AND isAccepted = 1"
+	sql := "SELECT bookid, isBorrowed FROM Requests WHERE userID = ? AND ((isAccepted = 1) OR (isBorrowed = 1 AND isAccepted = 0))"
 	rows, err := db.Query(sql, userID)
 	if err != nil {
 		fmt.Println("Failed to Fetch History", err)
@@ -268,12 +369,12 @@ func FetchHistory(userID int) ([]types.Book, error) {
 			return []types.Book{}, err
 		}
 		book, err := fetchBook(bookid)
-		if isBorrowed==1 {
+		if isBorrowed == 1 {
 			book.Status = "Borrowed"
 		} else {
 			book.Status = "Returned"
 		}
-		
+
 		if err != nil {
 			fmt.Println("Error in fetching book", err)
 			return []types.Book{}, err
@@ -325,7 +426,7 @@ func IsAlreadyRequestedOrBorrowed(userID int, bookID int) (bool, error) {
 		return false, err
 	}
 
-	checksql := "SELECT * FROM Requests WHERE userID = ? AND bookID = ? AND ((isBorrowed = 0 AND isAccepted = 0) OR (isBorrowed = 1 AND isAccepted = 1))"
+	checksql := "SELECT * FROM Requests WHERE userID = ? AND bookID = ? AND ((isBorrowed = 0 AND isAccepted = 0) OR (isBorrowed = 1 AND isAccepted = 1) OR (isBorrowed = 1 AND isAccepted = 0))"
 	rows, err := db.Query(checksql, userID, bookID)
 	if err != nil {
 		fmt.Println("Failed to fetch existing Requests", err)
@@ -337,4 +438,21 @@ func IsAlreadyRequestedOrBorrowed(userID int, bookID int) (bool, error) {
 	} else {
 		return true, nil
 	}
+}
+
+func ReturnRequest(userID int, bookID int) error {
+	db, err := Connection()
+	if err != nil {
+		fmt.Println("Error in connecting to DB", err)
+		return err
+	}
+
+	sql := "UPDATE Requests SET isAccepted = 0 WHERE userID = ? AND bookID = ?"
+	_, err = db.Exec(sql, userID, bookID)
+	if err != nil {
+		fmt.Println("Failed to create return request", err)
+		return err
+	}
+
+	return nil
 }

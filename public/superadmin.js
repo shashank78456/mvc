@@ -66,25 +66,18 @@ function superadminHandler() {
   } catch {}
 
   try {
-    const addButton = document.getElementsByClassName("add");
-    for (let i = 0; i < addButton.length; i++) {
-      addButton[i].addEventListener("click", async (e) => {
+    const saveForm = document.getElementsByClassName("changes");
+    for (let i = 0; i < saveForm.length; i++) {
+      saveForm[i].addEventListener("submit", async (e) => {
         e.preventDefault();
+        const newQuantity = document.getElementsByClassName("nquantity")[i];
+        const saveButton = document.getElementsByClassName("save")[i];
         await post(
-          { bookid: parseInt(addButton[i].value), toDo: "add" },
-          `http://localhost:3000/superadmin/add_book`
-        );
-        window.location.href = `http://localhost:3000/superadmin/home`;
-      });
-    }
-
-    const removeButton = document.getElementsByClassName("remove");
-    for (let i = 0; i < removeButton.length; i++) {
-      removeButton[i].addEventListener("click", async (e) => {
-        e.preventDefault();
-        await post(
-          { bookid: parseInt(removeButton[i].value), toDo: "remove" },
-          `http://localhost:3000/superadmin/remove_book`
+          {
+            bookid: parseInt(saveButton.value),
+            quantity: parseInt(newQuantity.value),
+          },
+          `http://localhost:3000/superadmin/edit_book`
         );
         window.location.href = `http://localhost:3000/superadmin/home`;
       });

@@ -51,18 +51,18 @@ func AddBook(bookID int) error {
 	return nil
 }
 
-func RemoveBook(bookID int) error {
+func EditBook(bookID int, newQuantity int) error {
 	db, err := Connection()
 	if err != nil {
 		fmt.Println("Error in connecting to DB")
 		return err
 	}
 
-	sql := "UPDATE Books SET quantity = quantity - 1 WHERE bookID = ?"
-	_, err = db.Exec(sql, bookID)
+	sql := "UPDATE Books SET quantity = ?  WHERE bookID = ?"
+	_, err = db.Exec(sql, newQuantity, bookID)
 
 	if err != nil {
-		fmt.Println("Removing Book Failed", err)
+		fmt.Println("Changing Quantity Failed", err)
 		return err
 	}
 	return nil

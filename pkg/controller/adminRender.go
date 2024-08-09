@@ -1,11 +1,12 @@
 package controller
 
 import (
+	"net/http"
+
 	"github.com/gorilla/mux"
 	"github.com/shashank78456/mvc/pkg/models"
 	"github.com/shashank78456/mvc/pkg/types"
 	"github.com/shashank78456/mvc/pkg/views"
-	"net/http"
 )
 
 func RenderAdmin(writer http.ResponseWriter, request *http.Request) {

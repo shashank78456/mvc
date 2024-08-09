@@ -20,8 +20,8 @@ li{
 #filler{
     height: 8rem;
 }
-.remove:hover{
-    background-color: rgb(255, 157, 0)!important;
+.save:hover{
+    background-color: rgb(255, 157, 0) !important;
     color: white;
 }
 .deny:hover{

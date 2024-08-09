@@ -44,23 +44,21 @@
                     <li>
                         <div class="card">
                             <div class="cbook text-start px-2">{{ .Bookname }} - {{ .Author }}</div>
-                            <div class="text-start px-2">Quantity: {{ .Quantity }}</div>
-                            <div class="col text-end py-2">
-                                <span class="add-div col text-end p-2">
-                                    <button type="click" class="add btn bg-white btn-block"
-                                        value="{{ .BookID }}">Add</button>
-                                </span>
-                                {{ if ne .Quantity 0 }}
-                                <span class="remove-div col text-end p-2">
-                                    <button type="click" class="remove btn bg-white btn-block"
-                                        value="{{ .BookID }}">Remove</button>
-                                </span>
-                                {{ end }}
-                                <span class="del-div col text-end p-2">
-                                    <button type="click" class="delete btn bg-white btn-block"
-                                        value="{{ .BookID }}">Delete</button>
-                                </span>
-                            </div>
+                            <form class="changes">
+                                <div class="text-start px-2">Quantity:
+                                    <input type="number" class="form-control nquantity" min="0" value="{{ .Quantity }}">
+                                </div>
+                                <div class="col edit-area text-end py-2">
+                                    <span class="remove-div col text-end p-2">
+                                        <button type="click" class="save btn bg-white btn-block"
+                                            value="{{ .BookID }}">Save Changes</button>
+                                    </span>
+                                    <span class="del-div col text-end p-2">
+                                        <button type="click" class="delete btn bg-white btn-block"
+                                            value="{{ .BookID }}">Delete</button>
+                                    </span>
+                                </div>
+                            </form>
                         </div>
                     </li>
                     {{ end }}

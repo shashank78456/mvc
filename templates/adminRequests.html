@@ -45,6 +45,11 @@
                                 {{ .Bookname }} - {{ .Author }}
                             </div>
                             <div class="user col text-end px-2">by {{ .Username }}</div>
+                            {{ if .IsBorrowed}}
+                                <div class="user col text-end px-2">Return</div>
+                            {{ else }}
+                                <div class="user col text-end px-2">Borrow</div>
+                            {{ end }}
                             <div class="col text-end py-2">
                                 <span class="col text-start p-2">
                                     <button type="click" class="btn accept bg-white btn-block" value="{{ .RequestID }}">

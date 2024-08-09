@@ -25,6 +25,7 @@ type Request struct {
 	Bookname   string `json:"bookname"`
 	Author     string `json:"author"`
 	IsAccepted bool   `json:"isAccepted"`
+	IsBorrowed bool   `json:"isBorrowed"`
 }
 
 type BookList struct {

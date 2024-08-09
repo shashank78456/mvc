@@ -2,9 +2,10 @@ package controller
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/shashank78456/mvc/pkg/models"
 	"github.com/shashank78456/mvc/pkg/types"
-	"net/http"
 )
 
 func AddNewBook(writer http.ResponseWriter, request *http.Request) {
@@ -36,7 +37,7 @@ func AddNewBook(writer http.ResponseWriter, request *http.Request) {
 	writer.Write(response)
 }
 
-func AddBook(writer http.ResponseWriter, request *http.Request) {
+func EditBook(writer http.ResponseWriter, request *http.Request) {
 	var Book types.Book
 	err := json.NewDecoder(request.Body).Decode(&Book)
 	if err != nil {
@@ -45,27 +46,7 @@ func AddBook(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	err = models.AddBook(Book.BookID)
-	if err != nil {
-		writer.WriteHeader(http.StatusInternalServerError)
-		writer.Write([]byte("Failed to Add Book"))
-		return
-	}
-
-	writer.WriteHeader(http.StatusOK)
-	writer.Write([]byte("Added Successfully"))
-}
-
-func RemoveBook(writer http.ResponseWriter, request *http.Request) {
-	var Book types.Book
-	err := json.NewDecoder(request.Body).Decode(&Book)
-	if err != nil {
-		writer.WriteHeader(http.StatusInternalServerError)
-		writer.Write([]byte("Error Decoding struct"))
-		return
-	}
-
-	err = models.RemoveBook(Book.BookID)
+	err = models.EditBook(Book.BookID, Book.Quantity)
 	if err != nil {
 		writer.WriteHeader(http.StatusInternalServerError)
 		writer.Write([]byte("Failed to Remove Book"))
@@ -106,6 +87,13 @@ func DeleteBook(writer http.ResponseWriter, request *http.Request) {
 		writer.Write(response)
 
 	} else {
+		err = models.DeleteRequest(Book.BookID)
+		if err != nil {
+			writer.WriteHeader(http.StatusInternalServerError)
+			writer.Write([]byte("Failed to Delete Request"))
+			return
+		}
+
 		err = models.DeleteBook(Book.BookID)
 		if err != nil {
 			writer.WriteHeader(http.StatusInternalServerError)
@@ -113,13 +101,6 @@ func DeleteBook(writer http.ResponseWriter, request *http.Request) {
 			return
 		}
 
-		err = models.DeleteRequest(Book.BookID)
-		if err != nil {
-			writer.WriteHeader(http.StatusInternalServerError)
-			writer.Write([]byte("Failed to Delete Request"))
-			return
-
-		}
 		status := make(map[string]bool)
 		status["isDeleted"] = true
 		response, err := json.Marshal(status)
