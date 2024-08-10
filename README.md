@@ -4,8 +4,8 @@
 
 1. Clone the repo using `git clone https://github.com/shashank78456/mvc.git`.
 2. Go to root directory of the repo. `cd mvc`.
-3. Execute `chmod +x ./cmd/setup.sh`.
-4. Run `./cmd/setup.sh`.
+3. Execute `chmod +x ./setup.sh`.
+4. Run `./setup.sh`.
 
 - Running Server
 

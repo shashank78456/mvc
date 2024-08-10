@@ -22,7 +22,7 @@
         </div>
         <div>
             <span class="container-fluid-start">
-                <span id="view" class="nav-item px-3">View Books</span>
+                <span id="view" class="nav-item text-primary px-3">View Books</span>
                 <span id="return" class="nav-item px-3">Return Books</span>
                 <span id="borrow" class="nav-item px-3">Borrow History</span>
             </span>
@@ -50,7 +50,7 @@
                                     <button type="click" id="borrow-book" class="borrow btn bg-white btn-block"
                                         value="{{ .BookID }}">Borrow</button>
                                     {{ else }}
-                                    <button type="click" id="borrow-book" class="borrow btn bg-white btn-block"
+                                    <button type="click" id="borrow-book" class="borrow btn bg-secondary btn-block"
                                         value="{{ .BookID }}" disabled>Borrow</button>
                                     {{ end }}
                                 </span>
