@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+  db:
+    container_name: mvc-lms-db
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./database/schema:/docker-entrypoint-initdb.d/
+      - db_data:/var/lib/mysql
+      
+  app:
+    container_name: mvc-lms-app
+    build: .
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - SECRET_KEY=${SECRET_KEY}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+
+volumes:
+  db_data:
+    name: mvc-lms-db

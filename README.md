@@ -13,6 +13,13 @@
 2. Execute `chmod +x run.sh`
 3. Run `./run.sh`.
 
+- Run using Docker
+
+1. Ensure docker is installed and running
+2. Execute `chmod +x ./docker_env_setup.sh`.
+3. Run `./docker_env_setup.sh`.
+4. Run `docker-compose up --build`
+
 - Unit Tests
 
 There are two test files:
