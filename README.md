@@ -7,13 +7,19 @@
 3. Execute `chmod +x ./setup.sh`.
 4. Run `./setup.sh`.
 
-- Running Server
+- Run using Apache Server
 
 1. Run `make migrate_up` and Press Enter.
 2. Execute `chmod +x run.sh`
 3. Run `./run.sh`.
 
-- Run using Docker
+- Run using nginx Server (for Apple Sillicon macOS with Homebrew installed only)
+
+1. Run `make migrate_up` and Press Enter.
+2. Execute `chmod +x run_nginx.sh`
+3. Run `./run_nginx.sh`.
+
+- Run using Docker (without Apache or nginx server)
 
 1. Ensure docker is installed and running
 2. Execute `chmod +x ./docker_env_setup.sh`.

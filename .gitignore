@@ -2,3 +2,4 @@
 vendor/
 main
 Makefile
+.DS_Store

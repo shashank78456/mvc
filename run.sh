@@ -6,14 +6,14 @@ then
     if [ -z "$email" ]
     then
         echo "E-mail ID cannot be empty"
-        exit -1
-    elif [ ! echo "$email" | grep -q "@" ]
+        exit 1
+    elif ! echo "$email" | grep -q "@" 
     then
         echo "Please Enter Valid E-mail ID"
-        exit -1
+        exit 1
     fi
 
-    if [[ command -v apache2 >/dev/null 2>&1 ]]
+    if command -v apache2 >/dev/null 2>&1
     then
         echo "Apache already installed"
     else
@@ -24,27 +24,29 @@ then
 
     echo "--------------Configuring Apache--------------"
     sudo a2enmod proxy proxy_http
-    sudo bash -c 'cat >> /etc/apache2/sites-available/mvc.sdslabs.local.conf <<EOL
-    <VirtualHost *:80>
-        ServerName mvc.sdslabs.local
-        ServerAdmin $email
-        ProxyPreserveHost On
-        ProxyPass / http://127.0.0.1:8000/
-        ProxyPassReverse / http://127.0.0.1:8000/
-        TransferLog /var/log/apache2/mvc_access.log
-        ErrorLog /var/log/apache2/mvc_error.log
-    </VirtualHost>
-    EOL'
+    sudo bash -c 'cat > /etc/apache2/sites-available/mvc.sdslabs.local.conf <<EOL
+<VirtualHost *:80>
+    ServerName mvc.sdslabs.local
+    ServerAdmin $email
+    ProxyPreserveHost On
+    ProxyPass / http://127.0.0.1:3000/
+    ProxyPassReverse / http://127.0.0.1:3000/
+    TransferLog /var/log/apache2/mvc_access.log
+    ErrorLog /var/log/apache2/mvc_error.log
+</VirtualHost>
+EOL'
 
-    sudo a2ensite /etc/apache2/sites-available/mvc.sdslabs.local.conf
-    echo "127.0.0.1 mvc.sdslabs.local" | sudo tee -a /etc/hosts > /dev/null
-    sudo a2dissite /etc/apache2/sites-available/000-default.conf
+    sudo a2ensite mvc.sdslabs.local.conf
+    grep -q "mvc.sdslabs.local" /etc/hosts || echo "127.0.0.1 mvc.sdslabs.local" | sudo tee -a /etc/hosts > /dev/null
+    sudo a2dissite 000-default.conf
     sudo apache2ctl configtest
+    sudo systemctl enable apache2
     sudo systemctl restart apache2
     sudo systemctl status apache2
     echo "---------------Configured Apache--------------"
 
     echo "Running on Apache Server..."
+    echo "Visit http://mvc.sdslabs.local in your browser"
     echo "Control + C to stop server"
     go run ./cmd/main.go
 
@@ -53,6 +55,7 @@ then
     echo "Running Without Apache Server..."
     echo "Control + C to stop server"
     go run ./cmd/main.go
+
 else
     echo "Please Enter a Valid Choice"
     exit 1
